@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 namespace Common.Materializer
 {
+    [ExecuteAlways]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialInstance))]
     public class MaterialInstance : MonoBehaviour
     {
         [SerializeField]
@@ -22,6 +24,7 @@ namespace Common.Materializer
             {
                 DestroyCopy();
                 _original = value;
+                ApplyMaterial(value);
             }
         }
 
@@ -65,16 +68,13 @@ namespace Common.Materializer
         private void OnDestroy()
         {
             DestroyCopy();
+
+            ApplyMaterial(_original);
         }
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (_original is null)
-            {
-                _original = GetMaterial(transform);
-            }
-
             if (!ReferenceEquals(_cached, _original))
             {
                 DestroyCopy();
@@ -83,6 +83,16 @@ namespace Common.Materializer
             }
 
             ApplyMaterial(Current);
+        }
+
+        private void Reset()
+        {
+            _cached = null;
+
+            if (_original is null)
+            {
+                _original = GetMaterial(transform);
+            }
         }
 #endif
 

@@ -1,7 +1,8 @@
 using UnityEngine;
 
-namespace Common
+namespace Common.Materializer
 {
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialInstanceBlocker))]
     public class MaterialInstanceBlocker : MonoBehaviour
     {
     }

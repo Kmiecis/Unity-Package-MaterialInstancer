@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Common.Materializer
 {
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialMatrix))]
     public class MaterialMatrix : AMaterialValue<Matrix4x4>
     {
         protected override void ApplyPropertyValue(Material material, int id, Matrix4x4 value)

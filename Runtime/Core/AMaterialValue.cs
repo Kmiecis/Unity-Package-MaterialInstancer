@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Common.Materializer
 {
-    [ExecuteAlways]
     public abstract class AMaterialValue<T> : MonoBehaviour
     {
         [SerializeField]

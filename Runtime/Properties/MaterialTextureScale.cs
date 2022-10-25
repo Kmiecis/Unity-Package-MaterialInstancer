@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Common.Materializer
 {
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialTextureScale))]
     public class MaterialTextureScale : AMaterialValue<Vector2>
     {
         protected override void ApplyPropertyValue(Material material, int id, Vector2 value)
@@ -19,7 +20,7 @@ namespace Common.Materializer
         {
             base.Reset();
 
-            PropertyValue = Vector2.one;
+            _propertyValue = Vector2.one;
         }
 #endif
     }

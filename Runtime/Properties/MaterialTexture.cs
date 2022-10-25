@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Common.Materializer
 {
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialTexture))]
     public class MaterialTexture : AMaterialValue<Texture>
     {
         protected override void ApplyPropertyValue(Material material, int id, Texture value)

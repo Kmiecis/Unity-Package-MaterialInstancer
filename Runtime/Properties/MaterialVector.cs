@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Common.Materializer
 {
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialVector))]
     public class MaterialVector : AMaterialValue<Vector4>
     {
         protected override void ApplyPropertyValue(Material material, int id, Vector4 value)
