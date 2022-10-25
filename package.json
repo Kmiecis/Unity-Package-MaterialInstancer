@@ -1,0 +1,14 @@
+{
+  "name": "com.common.materializer",
+  "displayName": "Common Materializer",
+  "author": {
+    "name": "Slawomir Kmiecik",
+    "email": "slawekkmiecik@gmail.com"
+  },
+  "description": "Common scripts that assist in managing Material runtime modifications",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kmiecis/unity-package-materializer"
+  }
+}

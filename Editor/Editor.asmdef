@@ -1,0 +1,18 @@
+{
+    "name": "CommonEditor.Materializer",
+    "rootNamespace": "CommonEditor.Materializer",
+    "references": [
+        "GUID:b8e2250a2ce665f42b9177f922c2612e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
