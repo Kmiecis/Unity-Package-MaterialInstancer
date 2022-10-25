@@ -70,6 +70,11 @@ namespace Common.Materializer
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            if (_original is null)
+            {
+                _original = GetMaterial(transform);
+            }
+
             if (!ReferenceEquals(_cached, _original))
             {
                 DestroyCopy();
@@ -80,6 +85,23 @@ namespace Common.Materializer
             ApplyMaterial(Current);
         }
 #endif
+
+        private static Material GetMaterial(Transform target)
+        {
+            // Applies to UI
+            if (target.TryGetComponent<Graphic>(out var graphic))
+            {
+                return graphic.material;
+            }
+
+            // Applies to non-UI
+            if (target.TryGetComponent<Renderer>(out var renderer))
+            {
+                return renderer.sharedMaterial ?? renderer.sharedMaterials[0];
+            }
+
+            return null;
+        }
 
         private static void SetMaterial(Material material, Transform target, int depth)
         {
