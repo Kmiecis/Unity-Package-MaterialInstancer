@@ -13,8 +13,14 @@ namespace Common.Materializer
         protected T _propertyValue;
 
         protected int _propertyId;
+        protected T _propertyCachedValue;
 
-        public Material Material
+        public Material MaterialOriginal
+        {
+            get => _instance is not null ? _instance.Original : null;
+        }
+
+        public Material MaterialCopy
         {
             get => _instance is not null ? _instance.Copy : null;
         }
@@ -50,12 +56,43 @@ namespace Common.Materializer
 
         private void ApplyPropertyValue(T value)
         {
-            ApplyPropertyValue(Material, _propertyId, value);
+            ApplyPropertyValue(MaterialCopy, _propertyId, value);
         }
 
         private T ReadPropertyValue()
         {
-            return ReadPropertyValue(Material, _propertyId);
+            return ReadPropertyValue(MaterialOriginal, _propertyId);
+        }
+
+        private bool TryReadPropertyValue(out T value)
+        {
+            var target = MaterialOriginal;
+            if (target.HasProperty(_propertyId))
+            {
+                value = ReadPropertyValue(target, _propertyId);
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        private void ApplyPropertyValueIfDirty(T value)
+        {
+            if (!Equals(_propertyCachedValue, default(T)) &&
+                !Equals(_propertyCachedValue, value))
+            {
+                ApplyPropertyValue(value);
+                _propertyCachedValue = value;
+            }
+        }
+
+        private void TryCachePropertyValue()
+        {
+            if (TryReadPropertyValue(out var originalValue))
+            {
+                _propertyCachedValue = originalValue;
+            }
         }
 
         private void RefreshPropertyId()
@@ -66,28 +103,23 @@ namespace Common.Materializer
         private void Start()
         {
             RefreshPropertyId();
+            TryCachePropertyValue();
 
-            var propertyValue = ReadPropertyValue();
-            if (!Equals(propertyValue, _propertyValue))
-            {
-                ApplyPropertyValue(_propertyValue);
-            }
+            ApplyPropertyValueIfDirty(_propertyValue);
         }
 
         private void OnDidApplyAnimationProperties()
         {
-            ApplyPropertyValue(_propertyValue);
+            ApplyPropertyValueIfDirty(_propertyValue);
         }
 
 #if UNITY_EDITOR
         protected void OnValidate()
         {
             RefreshPropertyId();
+            TryCachePropertyValue();
 
-            if (Material is not null)
-            {
-                ApplyPropertyValue(_propertyValue);
-            }
+            ApplyPropertyValueIfDirty(_propertyValue);
         }
 
         protected virtual void Reset()
