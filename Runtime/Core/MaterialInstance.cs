@@ -32,7 +32,7 @@ namespace Common.Materializer
         {
             get
             {
-                if (_copy is null && _original is not null)
+                if (_copy == null && _original != null)
                 {
                     _copy = new Material(_original);
                     ApplyMaterial(_copy);
@@ -43,7 +43,7 @@ namespace Common.Materializer
 
         public Material Current
         {
-            get => _copy is null ? _original : _copy;
+            get => _copy == null ? _original : _copy;
         }
 
         private void ApplyMaterial(Material material)
@@ -53,7 +53,7 @@ namespace Common.Materializer
 
         private void DestroyCopy()
         {
-            if (_copy is not null)
+            if (_copy != null)
             {
                 _copy.Destroy();
                 _copy = null;
@@ -89,7 +89,7 @@ namespace Common.Materializer
         {
             _cached = null;
 
-            if (_original is null)
+            if (_original == null)
             {
                 _original = GetMaterial(transform);
             }

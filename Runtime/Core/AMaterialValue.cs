@@ -17,15 +17,15 @@ namespace Common.Materializer
 
         public Material MaterialOriginal
         {
-            get => _instance is not null ? _instance.Original : null;
+            get => _instance != null ? _instance.Original : null;
         }
 
         public Material MaterialCopy
         {
-            get => _instance is not null ? _instance.Copy : null;
+            get => _instance != null ? _instance.Copy : null;
         }
 
-        public string PropertyName
+        public string Name
         {
             get => _propertyName;
             set
@@ -35,7 +35,7 @@ namespace Common.Materializer
             }
         }
 
-        public T PropertyValue
+        public T Value
         {
             get => _propertyValue;
             set
@@ -45,7 +45,7 @@ namespace Common.Materializer
             }
         }
 
-        public int PropertyId
+        public int Id
         {
             get => _propertyId;
         }
@@ -67,7 +67,8 @@ namespace Common.Materializer
         private bool TryReadPropertyValue(out T value)
         {
             var target = MaterialOriginal;
-            if (target.HasProperty(_propertyId))
+            if (target != null &&
+                target.HasProperty(_propertyId))
             {
                 value = ReadPropertyValue(target, _propertyId);
                 return true;
@@ -124,7 +125,7 @@ namespace Common.Materializer
 
         protected virtual void Reset()
         {
-            if (_instance is null)
+            if (_instance == null)
             {
                 if (
                     transform.TryGetComponentInParent<MaterialInstance>(out var instance) ||

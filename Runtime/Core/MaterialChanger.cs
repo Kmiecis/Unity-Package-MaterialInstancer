@@ -14,7 +14,7 @@ namespace Common.Materializer
 
         public bool IsChanged
         {
-            get => _swapped is not null;
+            get => _swapped != null;
         }
 
         public void Apply()
@@ -32,7 +32,7 @@ namespace Common.Materializer
 #if UNITY_EDITOR
         protected virtual void Reset()
         {
-            if (_instance is null)
+            if (_instance == null)
             {
                 if (
                     transform.TryGetComponentInParent<MaterialInstance>(out var instance) ||
