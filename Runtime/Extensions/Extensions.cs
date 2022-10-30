@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materializer
 {
-    public static class Extensions
+    internal static class Extensions
     {
         #region Component
         public static bool TryGetComponentInChildren<T>(this Component self, out T component)
