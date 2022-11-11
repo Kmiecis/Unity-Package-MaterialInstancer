@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Common.Materializer
+namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialTextureScale))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialTextureScale))]
     public class MaterialTextureScale : AMaterialValue<Vector2>
     {
         protected override void ApplyPropertyValue(Material material, int id, Vector2 value)

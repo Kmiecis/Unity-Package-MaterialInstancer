@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Common.Materializer
+namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" +nameof(Materializer) + "/" + nameof(MaterialChanger))]
+    [AddComponentMenu(nameof(Common) + "/" +nameof(Materials) + "/" + nameof(MaterialChanger))]
     public class MaterialChanger : MonoBehaviour
     {
         [SerializeField]

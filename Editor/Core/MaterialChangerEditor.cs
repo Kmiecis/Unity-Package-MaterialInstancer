@@ -1,8 +1,8 @@
-using Common.Materializer;
+using Common.Materials;
 using UnityEditor;
 using UnityEngine;
 
-namespace CommonEditor.Materializer
+namespace CommonEditor.Materials
 {
     [CustomEditor(typeof(MaterialChanger))]
     public class MaterialChangerEditor : Editor

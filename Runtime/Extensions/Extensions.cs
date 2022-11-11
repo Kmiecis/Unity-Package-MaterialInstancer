@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Common.Materializer
+namespace Common.Materials
 {
     internal static class Extensions
     {

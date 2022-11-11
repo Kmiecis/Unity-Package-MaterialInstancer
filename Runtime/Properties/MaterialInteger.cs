@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Common.Materializer
+namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialInteger))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInteger))]
     public class MaterialInteger : AMaterialValue<int>
     {
         protected override void ApplyPropertyValue(Material material, int id, int value)

@@ -1,6 +1,6 @@
 {
-    "name": "Common.Materializer",
-    "rootNamespace": "Common.Materializer",
+    "name": "Common.Materials",
+    "rootNamespace": "Common.Materials",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

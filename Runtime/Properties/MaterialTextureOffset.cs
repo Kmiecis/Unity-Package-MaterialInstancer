@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Common.Materializer
+namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialTextureOffset))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialTextureOffset))]
     public class MaterialTextureOffset : AMaterialValue<Vector2>
     {
         protected override void ApplyPropertyValue(Material material, int id, Vector2 value)

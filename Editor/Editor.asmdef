@@ -1,6 +1,6 @@
 {
-    "name": "CommonEditor.Materializer",
-    "rootNamespace": "CommonEditor.Materializer",
+    "name": "CommonEditor.Materials",
+    "rootNamespace": "CommonEditor.Materials",
     "references": [
         "GUID:b8e2250a2ce665f42b9177f922c2612e"
     ],

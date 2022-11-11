@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Common.Materializer
+namespace Common.Materials
 {
     public abstract class AMaterialValue<T> : MonoBehaviour
     {

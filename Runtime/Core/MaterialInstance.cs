@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Common.Materializer
+namespace Common.Materials
 {
     [ExecuteAlways]
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materializer) + "/" + nameof(MaterialInstance))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInstance))]
     public class MaterialInstance : MonoBehaviour
     {
         [SerializeField]
