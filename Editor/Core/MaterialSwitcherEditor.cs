@@ -4,30 +4,30 @@ using UnityEngine;
 
 namespace CommonEditor.Materials
 {
-    [CustomEditor(typeof(MaterialChanger))]
-    public class MaterialChangerEditor : Editor
+    [CustomEditor(typeof(MaterialSwitcher))]
+    public class MaterialSwitcherEditor : Editor
     {
-        private MaterialChanger Script
+        private MaterialSwitcher Script
         {
-            get => (MaterialChanger)target;
+            get => (MaterialSwitcher)target;
         }
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            if (Script.IsChanged)
+            if (Script.IsSwitched)
             {
-                if (GUILayout.Button("Revert"))
+                if (GUILayout.Button(nameof(Script.Revert)))
                 {
                     Script.Revert();
                 }
             }
             else
             {
-                if (GUILayout.Button("Apply"))
+                if (GUILayout.Button(nameof(Script.Switch)))
                 {
-                    Script.Apply();
+                    Script.Switch();
                 }
             }
         }

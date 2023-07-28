@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" +nameof(Materials) + "/" + nameof(MaterialChanger))]
-    public class MaterialChanger : MonoBehaviour
+    [AddComponentMenu(nameof(Common) + "/" +nameof(Materials) + "/" + nameof(MaterialSwitcher))]
+    public class MaterialSwitcher : MonoBehaviour
     {
         [SerializeField]
         protected MaterialInstance _instance;
@@ -12,12 +12,13 @@ namespace Common.Materials
 
         private Material _swapped;
 
-        public bool IsChanged
+        public bool IsSwitched
         {
             get => _swapped != null;
+            set => SetSwitched(value);
         }
 
-        public void Apply()
+        public void Switch()
         {
             _swapped = _instance.Original;
             _instance.Original = _material;
@@ -27,6 +28,24 @@ namespace Common.Materials
         {
             _instance.Original = _swapped;
             _swapped = null;
+        }
+
+        public void SetSwitched(bool value)
+        {
+            if (value)
+            {
+                if (!IsSwitched)
+                {
+                    Switch();
+                }
+            }
+            else
+            {
+                if (IsSwitched)
+                {
+                    Revert();
+                }
+            }
         }
 
 #if UNITY_EDITOR
