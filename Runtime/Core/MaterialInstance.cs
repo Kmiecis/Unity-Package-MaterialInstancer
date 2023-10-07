@@ -127,7 +127,7 @@ namespace Common.Materials
                 renderer.sharedMaterial = material;
             }
 
-            if (depth > 0)
+            if (depth != 0)
             {
                 foreach (Transform child in target)
                 {
