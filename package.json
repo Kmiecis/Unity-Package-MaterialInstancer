@@ -1,14 +1,14 @@
 {
-  "name": "com.common.materials",
-  "displayName": "Common Materials",
+  "name": "com.kmiecis.materials",
+  "displayName": "Materials",
   "author": {
     "name": "Kmiecis",
     "email": "slawekkmiecik@gmail.com"
   },
-  "description": "Common scripts that assist in managing Material runtime modifications",
+  "description": "Scripts library that assist in managing Material runtime modifications",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kmiecis/unity-package-materials"
+    "url": "https://github.com/Kmiecis/Unity-Package-Materials.git"
   }
 }
