@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Common.Materials
 {
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialFloat))]
-    public class MaterialFloat : AMaterialValue<float>
+    public class MaterialFloat : MaterialProperty<float>
     {
         protected override void ApplyPropertyValue(Material material, int id, float value)
         {

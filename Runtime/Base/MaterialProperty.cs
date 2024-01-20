@@ -2,18 +2,15 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    public abstract class AMaterialValue<T> : MonoBehaviour
+    public abstract class MaterialProperty<T> : MonoBehaviour
     {
-        [SerializeField]
-        protected MaterialInstance _instance = null;
+        [SerializeField] protected MaterialInstance _instance = null;
 
-        [SerializeField]
-        protected string _propertyName;
-        [SerializeField]
-        protected T _propertyValue;
+        [SerializeField] protected string _name;
+        [SerializeField] protected T _value;
 
-        protected int _propertyId;
-        protected T _propertyCachedValue;
+        protected int _id;
+        protected T _cached;
 
         public Material MaterialOriginal
         {
@@ -25,29 +22,30 @@ namespace Common.Materials
             get => _instance != null ? _instance.Copy : null;
         }
 
+        public Material MaterialCurrent
+        {
+            get => _instance != null ? _instance.Current : null;
+        }
+
         public string Name
         {
-            get => _propertyName;
+            get => _name;
             set
             {
-                _propertyName = value;
+                _name = value;
                 RefreshPropertyId();
             }
         }
 
         public T Value
         {
-            get => _propertyValue;
-            set
-            {
-                ApplyPropertyValue(value);
-                _propertyValue = value;
-            }
+            get => _value;
+            set => ApplyPropertyValue(value);
         }
 
         public int Id
         {
-            get => _propertyId;
+            get => _id;
         }
 
         protected abstract void ApplyPropertyValue(Material material, int id, T value);
@@ -56,21 +54,24 @@ namespace Common.Materials
 
         private void ApplyPropertyValue(T value)
         {
-            ApplyPropertyValue(MaterialCopy, _propertyId, value);
+            ApplyPropertyValue(MaterialCopy, _id, value);
+
+            _value = value;
+            _cached = value;
         }
 
-        private T ReadPropertyValue()
+        private T ReadPropertyValue(Material target)
         {
-            return ReadPropertyValue(MaterialOriginal, _propertyId);
+            return ReadPropertyValue(target, _id);
         }
 
         private bool TryReadPropertyValue(out T value)
         {
-            var target = MaterialOriginal;
+            var target = MaterialCurrent;
             if (target != null &&
-                target.HasProperty(_propertyId))
+                target.HasProperty(_id))
             {
-                value = ReadPropertyValue(target, _propertyId);
+                value = ReadPropertyValue(target, _id);
                 return true;
             }
 
@@ -80,25 +81,24 @@ namespace Common.Materials
 
         private void ApplyPropertyValueIfDirty(T value)
         {
-            if (!Equals(_propertyCachedValue, default(T)) &&
-                !Equals(_propertyCachedValue, value))
+            if (!Equals(_cached, default(T)) &&
+                !Equals(_cached, value))
             {
                 ApplyPropertyValue(value);
-                _propertyCachedValue = value;
             }
         }
 
         private void TryCachePropertyValue()
         {
-            if (TryReadPropertyValue(out var originalValue))
+            if (TryReadPropertyValue(out var value))
             {
-                _propertyCachedValue = originalValue;
+                _cached = value;
             }
         }
 
         private void RefreshPropertyId()
         {
-            _propertyId = Shader.PropertyToID(_propertyName);
+            _id = Shader.PropertyToID(_name);
         }
 
         private void Start()
@@ -106,12 +106,12 @@ namespace Common.Materials
             RefreshPropertyId();
             TryCachePropertyValue();
 
-            ApplyPropertyValueIfDirty(_propertyValue);
+            ApplyPropertyValueIfDirty(_value);
         }
 
         private void OnDidApplyAnimationProperties()
         {
-            ApplyPropertyValueIfDirty(_propertyValue);
+            ApplyPropertyValueIfDirty(_value);
         }
 
 #if UNITY_EDITOR
@@ -120,17 +120,15 @@ namespace Common.Materials
             RefreshPropertyId();
             TryCachePropertyValue();
 
-            ApplyPropertyValueIfDirty(_propertyValue);
+            ApplyPropertyValueIfDirty(_value);
         }
 
         protected virtual void Reset()
         {
             if (_instance == null)
             {
-                if (
-                    transform.TryGetComponentInParent<MaterialInstance>(out var instance) ||
-                    transform.TryGetComponentInChildren<MaterialInstance>(out instance)
-                )
+                if (transform.TryGetComponentInParent<MaterialInstance>(out var instance) ||
+                    transform.TryGetComponentInChildren<MaterialInstance>(out instance))
                 {
                     _instance = instance;
                 }

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Common.Materials
 {
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialVector3))]
-    public class MaterialVector3 : AMaterialValue<Vector3>
+    public class MaterialVector3 : MaterialProperty<Vector3>
     {
         protected override void ApplyPropertyValue(Material material, int id, Vector3 value)
         {

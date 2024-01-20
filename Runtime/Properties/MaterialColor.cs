@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Common.Materials
 {
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialColor))]
-    public class MaterialColor : AMaterialValue<Color>
+    public class MaterialColor : MaterialProperty<Color>
     {
         protected override void ApplyPropertyValue(Material material, int id, Color value)
         {
@@ -20,7 +20,7 @@ namespace Common.Materials
         {
             base.Reset();
 
-            _propertyValue = Color.white;
+            _value = Color.white;
         }
 #endif
     }
