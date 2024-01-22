@@ -11,6 +11,12 @@ namespace Common.Materials
             return component != null;
         }
 
+        public static bool TryGetComponentsInChildren<T>(this Component self, out T[] component)
+        {
+            component = self.GetComponentsInChildren<T>();
+            return component.Length > 0;
+        }
+
         public static bool TryGetComponentInParent<T>(this Component self, out T component)
         {
             component = self.GetComponentInParent<T>();

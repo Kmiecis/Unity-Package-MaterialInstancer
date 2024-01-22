@@ -3,8 +3,7 @@ using UnityEngine;
 namespace Common.Materials
 {
     [ExecuteAlways]
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInstance))]
-    public class MaterialInstance : MonoBehaviour
+    public abstract class MaterialInstance : MonoBehaviour
     {
         [SerializeField] private Material _original;
         [SerializeField] private int _depth;
@@ -19,7 +18,7 @@ namespace Common.Materials
                 DestroyCopy();
 
                 _original = value;
-                ApplyMaterial(Current);
+                ApplyMaterial(_original);
             }
         }
 
@@ -30,7 +29,7 @@ namespace Common.Materials
                 if (_copy == null && _original != null)
                 {
                     _copy = new Material(_original);
-                    ApplyMaterial(Current);
+                    ApplyMaterial(_copy);
                 }
                 return _copy;
             }
@@ -41,9 +40,18 @@ namespace Common.Materials
             get => _copy == null ? _original : _copy;
         }
 
+        public void Apply()
+        {
+            ApplyMaterial(Current);
+        }
+
+        protected abstract Material ReadMaterial(Transform target, int depth);
+
+        protected abstract void ApplyMaterial(Transform target, Material material, int depth);
+
         private void ApplyMaterial(Material material)
         {
-            UMaterial.SetMaterial(material, transform, _depth);
+            ApplyMaterial(transform, material, _depth);
         }
 
         private void DestroyCopy()
@@ -84,7 +92,7 @@ namespace Common.Materials
 
         private void Reset()
         {
-            _original = UMaterial.GetMaterial(transform, _depth);
+            _original = ReadMaterial(transform, _depth);
             _cached = _original;
         }
 #endif

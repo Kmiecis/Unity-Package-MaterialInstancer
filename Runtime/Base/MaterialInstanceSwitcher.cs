@@ -5,14 +5,18 @@ namespace Common.Materials
     [AddComponentMenu(nameof(Common) + "/" +nameof(Materials) + "/" + nameof(MaterialInstanceSwitcher))]
     public class MaterialInstanceSwitcher : MonoBehaviour
     {
-        [SerializeField] private MaterialInstance _instance;
-        [SerializeField] private Material _material;
+        [SerializeField] private MaterialInstance _original;
+        [SerializeField] private MaterialInstance _switched;
+        [SerializeField] private bool _isSwitched;
 
-        private Material _switched;
+        public MaterialInstance Current
+        {
+            get => _isSwitched ? _switched : _original;
+        }
 
         public bool IsSwitched
         {
-            get => _switched != null;
+            get => _isSwitched;
             set => SetSwitched(value);
         }
 
@@ -36,24 +40,30 @@ namespace Common.Materials
 
         public void SetSwitched()
         {
-            _switched = _instance.Original;
-            _instance.Original = _material;
+            _isSwitched = true;
+            ApplyCurrentInstance();
         }
 
         public void SetOriginal()
         {
-            _instance.Original = _switched;
-            _switched = null;
+            _isSwitched = false;
+            ApplyCurrentInstance();
+        }
+
+        private void ApplyCurrentInstance()
+        {
+            Current?.Apply();
         }
 
 #if UNITY_EDITOR
+        private void OnValidate()
+        {
+            ApplyCurrentInstance();
+        }
+
         private void Reset()
         {
-            if (transform.TryGetComponentInParent<MaterialInstance>(out var instance) ||
-                transform.TryGetComponentInChildren<MaterialInstance>(out instance))
-            {
-                _instance = instance;
-            }
+            _original = transform.GetComponentInChildren<MaterialInstance>();
         }
 #endif
     }

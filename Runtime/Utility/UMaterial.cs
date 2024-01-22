@@ -5,16 +5,11 @@ namespace Common.Materials
 {
     public static class UMaterial
     {
-        public static Material GetMaterial(Transform target, int depth = 0)
+        public static Material GetMaterialFromGraphic(Transform target, int depth = 0)
         {
             if (target.TryGetComponent<Graphic>(out var graphic))
-            {   // Applies to UI
+            {
                 return graphic.material;
-            }
-
-            if (target.TryGetComponent<Renderer>(out var renderer))
-            {   // Applies to non-UI
-                return renderer.sharedMaterial ?? renderer.sharedMaterials[0];
             }
 
             if (depth != 0)
@@ -23,7 +18,7 @@ namespace Common.Materials
                 {
                     if (!child.TryGetComponent<MaterialBlocker>(out _))
                     {
-                        var result = GetMaterial(child, depth - 1);
+                        var result = GetMaterialFromGraphic(child, depth - 1);
                         if (result != null)
                         {
                             return result;
@@ -35,16 +30,11 @@ namespace Common.Materials
             return null;
         }
 
-        public static void SetMaterial(Material material, Transform target, int depth = 0)
+        public static Material GetMaterialFromRenderer(Transform target, int depth = 0)
         {
-            if (target.TryGetComponent<Graphic>(out var graphic))
-            {   // Apply to UI
-                graphic.material = material;
-            }
-            
             if (target.TryGetComponent<Renderer>(out var renderer))
-            {   // Apply to non-UI
-                renderer.sharedMaterial = material;
+            {
+                return renderer.sharedMaterial ?? renderer.sharedMaterials[0];
             }
 
             if (depth != 0)
@@ -53,7 +43,53 @@ namespace Common.Materials
                 {
                     if (!child.TryGetComponent<MaterialBlocker>(out _))
                     {
-                        SetMaterial(material, child, depth - 1);
+                        var result = GetMaterialFromRenderer(child, depth - 1);
+                        if (result != null)
+                        {
+                            return result;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static void SetMaterialToGraphic(Transform target, Material material, int depth = 0)
+        {
+            if (target.TryGetComponent<Graphic>(out var graphic))
+            {
+                graphic.material = material;
+            }
+            
+            if (depth != 0)
+            {
+                foreach (Transform child in target)
+                {
+                    if (!child.TryGetComponent<MaterialBlocker>(out _))
+                    {
+                        SetMaterialToGraphic(child, material, depth - 1);
+                    }
+                }
+            }
+        }
+
+        public static void SetMaterialToRenderer(Transform target, Material material, int index = 0, int depth = 0)
+        {
+            if (target.TryGetComponent<Renderer>(out var renderer))
+            {
+                var materials = renderer.sharedMaterials;
+                materials[index] = material;
+                renderer.sharedMaterials = materials;
+            }
+
+            if (depth != 0)
+            {
+                foreach (Transform child in target)
+                {
+                    if (!child.TryGetComponent<MaterialBlocker>(out _))
+                    {
+                        SetMaterialToRenderer(child, material, index, depth - 1);
                     }
                 }
             }

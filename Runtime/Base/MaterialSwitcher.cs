@@ -3,13 +3,12 @@ using UnityEngine;
 namespace Common.Materials
 {
     [ExecuteAlways]
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialSwitcher))]
-    public class MaterialSwitcher : MonoBehaviour
+    public abstract class MaterialSwitcher : MonoBehaviour
     {
         [SerializeField] private Material _original;
         [SerializeField] private Material _switched;
         [SerializeField] private int _depth;
-        [SerializeField] private bool _isSwithed = false;
+        [SerializeField] private bool _isSwithed;
 
         public Material Current
         {
@@ -52,9 +51,13 @@ namespace Common.Materials
             SetCurrentMaterial();
         }
 
+        protected abstract Material GetMaterial(Transform target, int depth);
+
+        protected abstract void SetMaterial(Transform target, Material material, int depth);
+
         private void SetCurrentMaterial()
         {
-            UMaterial.SetMaterial(Current, transform, _depth);
+            SetMaterial(transform, Current, _depth);
         }
 
         private void Start()
@@ -70,7 +73,7 @@ namespace Common.Materials
 
         private void Reset()
         {
-            _original = UMaterial.GetMaterial(transform, _depth);
+            _original = GetMaterial(transform, _depth);
         }
 #endif
     }
