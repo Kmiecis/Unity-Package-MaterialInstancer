@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Common.Materials
 {
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialTextureScale))]
-    public class MaterialTextureScale : MaterialProperty<Vector2>
+    public class MaterialTextureScale : MaterialPropertyNamed<Vector2>
     {
         protected override void ApplyPropertyValue(Material material, int id, Vector2 value)
         {

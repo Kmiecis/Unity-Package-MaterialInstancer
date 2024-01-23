@@ -29,6 +29,7 @@ namespace Common.Materials
                 if (_copy == null && _original != null)
                 {
                     _copy = new Material(_original);
+                    _copy.name += " (Clone)";
                     ApplyMaterial(_copy);
                 }
                 return _copy;

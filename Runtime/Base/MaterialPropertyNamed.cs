@@ -3,11 +3,24 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    public abstract class MaterialProperty<T> : MonoBehaviour
+    public abstract class MaterialPropertyNamed<T> : MonoBehaviour
     {
         [SerializeField] protected MaterialInstance[] _instances = null;
 
+        [SerializeField] protected string _name;
         [SerializeField] protected T _value;
+
+        protected int _id;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                RefreshPropertyId();
+            }
+        }
 
         public T Value
         {
@@ -15,9 +28,14 @@ namespace Common.Materials
             set => ApplyPropertyValue(value);
         }
 
-        protected abstract void ApplyPropertyValue(Material material, T value);
+        public int Id
+        {
+            get => _id;
+        }
 
-        protected abstract T ReadPropertyValue(Material material);
+        protected abstract void ApplyPropertyValue(Material material, int id, T value);
+
+        protected abstract T ReadPropertyValue(Material material, int id);
 
         private IEnumerable<Material> GetMaterialCopies()
         {
@@ -36,14 +54,20 @@ namespace Common.Materials
         {
             foreach (var material in GetMaterialCopies())
             {
-                ApplyPropertyValue(material, value);
+                ApplyPropertyValue(material, _id, value);
             }
 
             _value = value;
         }
 
+        private void RefreshPropertyId()
+        {
+            _id = Shader.PropertyToID(_name);
+        }
+
         private void Start()
         {
+            RefreshPropertyId();
             ApplyPropertyValue();
         }
 
@@ -55,6 +79,7 @@ namespace Common.Materials
 #if UNITY_EDITOR
         protected void OnValidate()
         {
+            RefreshPropertyId();
             ApplyPropertyValue();
         }
 
