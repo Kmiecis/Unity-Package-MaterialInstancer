@@ -6,13 +6,9 @@ namespace Common.Materials
     public class MaterialShader : MaterialProperty<Shader>
     {
         protected override void ApplyPropertyValue(Material material, Shader value)
-        {
-            material.shader = value;
-        }
+            => material.shader = value;
 
         protected override Shader ReadPropertyValue(Material material)
-        {
-            return material.shader;
-        }
+            => material.shader;
     }
 }

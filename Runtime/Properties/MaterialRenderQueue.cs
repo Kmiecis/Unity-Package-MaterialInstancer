@@ -6,13 +6,9 @@ namespace Common.Materials
     public class MaterialRenderQueue : MaterialProperty<int>
     {
         protected override void ApplyPropertyValue(Material material, int value)
-        {
-            material.renderQueue = value;
-        }
+            => material.renderQueue = value;
 
         protected override int ReadPropertyValue(Material material)
-        {
-            return material.renderQueue;
-        }
+            => material.renderQueue;
     }
 }

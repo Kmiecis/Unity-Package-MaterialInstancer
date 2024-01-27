@@ -6,13 +6,9 @@ namespace Common.Materials
     public class MaterialInstanceForGraphic : MaterialInstance
     {
         protected override Material ReadMaterial(Transform target, int depth)
-        {
-            return UMaterial.GetMaterialFromGraphic(target, depth);
-        }
+            => UMaterial.GetMaterialFromGraphic(target, depth);
 
         protected override void ApplyMaterial(Transform target, Material material, int depth)
-        {
-            UMaterial.SetMaterialToGraphic(transform, material, depth);
-        }
+            => UMaterial.SetMaterialToGraphic(transform, material, depth);
     }
 }

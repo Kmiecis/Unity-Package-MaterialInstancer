@@ -6,22 +6,12 @@ namespace Common.Materials
     public class MaterialColor : MaterialPropertyNamed<Color>
     {
         protected override void ApplyPropertyValue(Material material, int id, Color value)
-        {
-            material.SetColor(id, value);
-        }
+            => material.SetColor(id, value);
 
         protected override Color ReadPropertyValue(Material material, int id)
-        {
-            return material.GetColor(id);
-        }
+            => material.GetColor(id);
 
-#if UNITY_EDITOR
-        protected override void Reset()
-        {
-            base.Reset();
-
-            _value = Color.white;
-        }
-#endif
+        protected override Color GetDefaultValue()
+            => Color.white;
     }
 }

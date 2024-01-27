@@ -6,13 +6,9 @@ namespace Common.Materials
     public class MaterialVector2 : MaterialPropertyNamed<Vector2>
     {
         protected override void ApplyPropertyValue(Material material, int id, Vector2 value)
-        {
-            material.SetVector(id, value);
-        }
+            => material.SetVector(id, value);
 
         protected override Vector2 ReadPropertyValue(Material material, int id)
-        {
-            return material.GetVector(id);
-        }
+            => material.GetVector(id);
     }
 }

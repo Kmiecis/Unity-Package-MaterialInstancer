@@ -6,13 +6,9 @@ namespace Common.Materials
     public class MaterialTexture : MaterialPropertyNamed<Texture>
     {
         protected override void ApplyPropertyValue(Material material, int id, Texture value)
-        {
-            material.SetTexture(id, value);
-        }
+            => material.SetTexture(id, value);
 
         protected override Texture ReadPropertyValue(Material material, int id)
-        {
-            return material.GetTexture(id);
-        }
+            => material.GetTexture(id);
     }
 }

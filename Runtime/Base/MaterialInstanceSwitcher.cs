@@ -60,11 +60,6 @@ namespace Common.Materials
         {
             ApplyCurrentInstance();
         }
-
-        private void Reset()
-        {
-            _original = transform.GetComponentInChildren<MaterialInstance>();
-        }
 #endif
     }
 }

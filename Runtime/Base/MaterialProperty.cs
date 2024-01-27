@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
+    [ExecuteAlways]
     public abstract class MaterialProperty<T> : MonoBehaviour
     {
         [SerializeField] protected MaterialInstance[] _instances = null;
@@ -12,34 +13,71 @@ namespace Common.Materials
         public T Value
         {
             get => _value;
-            set => ApplyPropertyValue(value);
+            set => SetPropertyValue(value);
+        }
+
+        public MaterialProperty()
+        {
+            _value = GetDefaultValue();
+        }
+
+        public IEnumerable<MaterialInstance> GetInstances()
+        {
+            foreach (var instance in _instances)
+            {
+                if (instance != null)
+                {
+                    yield return instance;
+                }
+            }
         }
 
         protected abstract void ApplyPropertyValue(Material material, T value);
 
         protected abstract T ReadPropertyValue(Material material);
 
-        private IEnumerable<Material> GetMaterialCopies()
+        protected virtual T GetDefaultValue()
         {
-            foreach (var instance in _instances)
+            return default;
+        }
+
+        private IEnumerable<Material> GetClones()
+        {
+            foreach (var instance in GetInstances())
             {
-                yield return instance.Copy;
+                var clone = instance.Clone;
+                if (clone != null)
+                {
+                    yield return clone;
+                }
             }
         }
 
         private void ApplyPropertyValue()
         {
-            ApplyPropertyValue(_value);
+            SetPropertyValue(_value);
         }
 
-        private void ApplyPropertyValue(T value)
+        private void SetPropertyValue(T value)
         {
-            foreach (var material in GetMaterialCopies())
+            foreach (var clone in GetClones())
             {
-                ApplyPropertyValue(material, value);
+                ApplyPropertyValue(clone, value);
             }
 
             _value = value;
+        }
+
+        private void RestorePropertyValues()
+        {
+            foreach (var instance in GetInstances())
+            {
+                if (instance.Original != null && instance.HasClone)
+                {
+                    var defaultValue = ReadPropertyValue(instance.Original);
+                    ApplyPropertyValue(instance.Clone, defaultValue);
+                }
+            }
         }
 
         private void Start()
@@ -52,13 +90,18 @@ namespace Common.Materials
             ApplyPropertyValue();
         }
 
+        private void OnDestroy()
+        {
+            RestorePropertyValues();
+        }
+
 #if UNITY_EDITOR
-        protected void OnValidate()
+        private void OnValidate()
         {
             ApplyPropertyValue();
         }
 
-        protected virtual void Reset()
+        private void Reset()
         {
             _instances = transform.GetComponentsInChildren<MaterialInstance>();
         }

@@ -8,37 +8,43 @@ namespace Common.Materials
         [SerializeField] private Material _original;
         [SerializeField] private int _depth;
 
-        private Material _copy;
+        private Material _clone;
 
         public Material Original
         {
             get => _original;
             set
             {
-                DestroyCopy();
+                DestroyClone();
 
                 _original = value;
+
                 ApplyMaterial(_original);
             }
         }
 
-        public Material Copy
+        public Material Clone
         {
             get
             {
-                if (_copy == null && _original != null)
+                if (_clone == null && _original != null)
                 {
-                    _copy = new Material(_original);
-                    _copy.name += " (Clone)";
-                    ApplyMaterial(_copy);
+                    _clone = CreateClone();
+
+                    ApplyMaterial(_clone);
                 }
-                return _copy;
+                return _clone;
             }
         }
 
         public Material Current
         {
-            get => _copy == null ? _original : _copy;
+            get => HasClone ? _clone : _original;
+        }
+
+        public bool HasClone
+        {
+            get => _clone != null;
         }
 
         public void Apply()
@@ -55,12 +61,19 @@ namespace Common.Materials
             ApplyMaterial(transform, material, _depth);
         }
 
-        private void DestroyCopy()
+        private Material CreateClone()
         {
-            if (_copy != null)
+            var result = new Material(_original);
+            result.name += " (Clone)";
+            return result;
+        }
+
+        private void DestroyClone()
+        {
+            if (_clone != null)
             {
-                _copy.Destroy();
-                _copy = null;
+                _clone.Destroy();
+                _clone = null;
             }
         }
 
@@ -71,7 +84,7 @@ namespace Common.Materials
 
         private void OnDestroy()
         {
-            DestroyCopy();
+            DestroyClone();
 
             ApplyMaterial(Current);
         }
@@ -83,7 +96,7 @@ namespace Common.Materials
         {
             if (_cached != _original)
             {
-                DestroyCopy();
+                DestroyClone();
 
                 _cached = _original;
             }
@@ -93,7 +106,9 @@ namespace Common.Materials
 
         private void Reset()
         {
+            _depth = transform.GetDepth();
             _original = ReadMaterial(transform, _depth);
+
             _cached = _original;
         }
 #endif

@@ -37,5 +37,15 @@ namespace Common.Materials
             }
         }
         #endregion
+
+        #region Transform
+        public static int GetDepth(this Transform self, int depth = 0)
+        {
+            var result = depth;
+            foreach (Transform child in self)
+                result = Mathf.Max(result, child.GetDepth(depth + 1));
+            return result;
+        }
+        #endregion
     }
 }

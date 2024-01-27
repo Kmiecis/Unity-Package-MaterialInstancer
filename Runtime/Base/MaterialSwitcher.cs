@@ -73,6 +73,7 @@ namespace Common.Materials
 
         private void Reset()
         {
+            _depth = transform.GetDepth();
             _original = GetMaterial(transform, _depth);
         }
 #endif
