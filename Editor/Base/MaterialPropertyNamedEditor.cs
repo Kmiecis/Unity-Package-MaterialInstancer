@@ -12,6 +12,7 @@ namespace CommonEditor.Materials
     {
         private SerializedProperty _instancesProperty;
         private SerializedProperty _nameProperty;
+        private SerializedProperty _activeProperty;
         private SerializedProperty _valueProperty;
 
         private int _nameIndex;
@@ -21,12 +22,13 @@ namespace CommonEditor.Materials
             serializedObject.Update();
 
             EditorGUILayout.PropertyField(_instancesProperty);
+            EditorGUILayout.PropertyField(_activeProperty);
 
             var names = FindPropertyNames();
             if (names.Length > 0)
             {
-                UEditorGUILayout.PropertyPopup(_nameProperty, ref _nameIndex, names);
                 EditorGUILayout.PropertyField(_valueProperty);
+                UEditorGUILayout.PropertyPopup(_nameProperty, ref _nameIndex, names);
             }
             else
             {
@@ -41,6 +43,7 @@ namespace CommonEditor.Materials
         {
             _instancesProperty = serializedObject.FindProperty("_instances");
             _nameProperty = serializedObject.FindProperty("_name");
+            _activeProperty = serializedObject.FindProperty("_active");
             _valueProperty = serializedObject.FindProperty("_value");
         }
 

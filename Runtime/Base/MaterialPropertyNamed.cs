@@ -7,16 +7,17 @@ namespace Common.Materials
     public abstract class MaterialPropertyNamed<T> : MonoBehaviour
     {
         [SerializeField] protected MaterialInstance[] _instances = null;
-
-        [SerializeField] protected string _name;
+        [SerializeField] protected bool _active;
         [SerializeField] protected T _value;
+        [SerializeField] protected string _name;
 
-        protected int _id;
+        private bool _dirty;
+        private int _id;
 
-        public string Name
+        public bool IsActive
         {
-            get => _name;
-            set => SetPropertyName(value);
+            get => _active;
+            set => SetActive(value);
         }
 
         public T Value
@@ -25,14 +26,17 @@ namespace Common.Materials
             set => SetPropertyValue(value);
         }
 
-        public int Id
+        public string Name
         {
-            get => _id;
+            get => _name;
+            set => SetPropertyName(value);
         }
 
         public MaterialPropertyNamed()
         {
-            _value = GetDefaultValue();
+            var value = GetDefaultValue();
+
+            SetPropertyValue(value);
         }
 
         public IEnumerable<MaterialInstance> GetInstances()
@@ -55,21 +59,41 @@ namespace Common.Materials
             return default;
         }
 
+        protected void RefreshPropertyValue()
+        {
+            if (_active)
+            {
+                ApplyPropertyValue(_value);
+            }
+            else if (_dirty)
+            {
+                RestorePropertyValues();
+            }
+        }
+
         private IEnumerable<Material> GetClones()
         {
             foreach (var instance in GetInstances())
             {
-                var clone = instance.Clone;
-                if (clone != null)
+                if (instance.GetClone(out var clone))
                 {
                     yield return clone;
                 }
             }
         }
 
-        private void ApplyPropertyValue()
+        private void SetActive(bool value)
         {
-            SetPropertyValue(_value);
+            _active = value;
+
+            RefreshPropertyValue();
+        }
+
+        private void SetPropertyValue(T value)
+        {
+            _value = value;
+
+            RefreshPropertyValue();
         }
 
         private void SetPropertyName(string value)
@@ -77,28 +101,31 @@ namespace Common.Materials
             _name = value;
 
             RefreshPropertyId();
+            RefreshPropertyValue();
         }
 
-        private void SetPropertyValue(T value)
+        private void ApplyPropertyValue(T value)
         {
             foreach (var clone in GetClones())
             {
                 ApplyPropertyValue(clone, _id, value);
             }
 
-            _value = value;
+            _dirty = true;
         }
 
         private void RestorePropertyValues()
         {
             foreach (var instance in GetInstances())
             {
-                if (instance.Original != null && instance.HasClone)
+                if (instance.TryGetClone(out var clone))
                 {
                     var defaultValue = ReadPropertyValue(instance.Original, _id);
-                    ApplyPropertyValue(instance.Clone, _id, defaultValue);
+                    ApplyPropertyValue(clone, _id, defaultValue);
                 }
             }
+
+            _dirty = false;
         }
 
         private void RefreshPropertyId()
@@ -108,13 +135,12 @@ namespace Common.Materials
 
         private void Start()
         {
-            RefreshPropertyId();
-            ApplyPropertyValue();
+            RefreshPropertyValue();
         }
 
         private void OnDidApplyAnimationProperties()
         {
-            ApplyPropertyValue();
+            RefreshPropertyValue();
         }
 
         private void OnDestroy()
@@ -126,7 +152,7 @@ namespace Common.Materials
         private void OnValidate()
         {
             RefreshPropertyId();
-            ApplyPropertyValue();
+            RefreshPropertyValue();
         }
 
         private void Reset()

@@ -13,59 +13,60 @@ namespace Common.Materials
         public Material Original
         {
             get => _original;
-            set
-            {
-                DestroyClone();
-
-                _original = value;
-
-                ApplyMaterial(_original);
-            }
-        }
-
-        public Material Clone
-        {
-            get
-            {
-                if (_clone == null && _original != null)
-                {
-                    _clone = CreateClone();
-
-                    ApplyMaterial(_clone);
-                }
-                return _clone;
-            }
+            set => SetOriginal(value);
         }
 
         public Material Current
         {
-            get => HasClone ? _clone : _original;
+            get => _clone != null ? _clone : _original;
         }
 
-        public bool HasClone
+        public Material GetClone()
         {
-            get => _clone != null;
+            GetClone(out var result);
+            return result;
+        }
+
+        public bool GetClone(out Material clone)
+        {
+            if (_clone == null && _original != null)
+            {
+                _clone = CreateClone(_original);
+
+                ApplyMaterial();
+            }
+
+            return TryGetClone(out clone);
+        }
+
+        public bool TryGetClone(out Material clone)
+        {
+            clone = _clone;
+            return clone != null;
         }
 
         public void Apply()
         {
-            ApplyMaterial(Current);
+            ApplyMaterial();
         }
 
         protected abstract Material ReadMaterial(Transform target, int depth);
 
         protected abstract void ApplyMaterial(Transform target, Material material, int depth);
 
-        private void ApplyMaterial(Material material)
+        private void ApplyMaterial()
         {
+            var material = Current;
             ApplyMaterial(transform, material, _depth);
         }
 
-        private Material CreateClone()
+        private void SetOriginal(Material value)
         {
-            var result = new Material(_original);
-            result.name += " (Clone)";
-            return result;
+            DestroyClone();
+
+            _original = value;
+
+            ApplyMaterial();
         }
 
         private void DestroyClone()
@@ -79,14 +80,14 @@ namespace Common.Materials
 
         private void Start()
         {
-            ApplyMaterial(Current);
+            ApplyMaterial();
         }
 
         private void OnDestroy()
         {
             DestroyClone();
 
-            ApplyMaterial(Current);
+            ApplyMaterial();
         }
 
 #if UNITY_EDITOR
@@ -101,7 +102,7 @@ namespace Common.Materials
                 _cached = _original;
             }
 
-            ApplyMaterial(Current);
+            ApplyMaterial();
         }
 
         private void Reset()
@@ -112,5 +113,12 @@ namespace Common.Materials
             _cached = _original;
         }
 #endif
+
+        private static Material CreateClone(Material source)
+        {
+            var result = new Material(source);
+            result.name += " (Clone)";
+            return result;
+        }
     }
 }
