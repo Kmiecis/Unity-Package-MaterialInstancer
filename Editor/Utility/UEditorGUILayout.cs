@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine;
 
 namespace CommonEditor.Materials
 {
@@ -14,10 +15,16 @@ namespace CommonEditor.Materials
             return null;
         }
 
-        public static void PropertyPopup(SerializedProperty property, ref int selectedIndex, string[] displayedOptions)
+        public static string PropertyPopup(SerializedProperty property, ref int selectedIndex, string[] displayedOptions)
         {
             var option = Popup(ref selectedIndex, displayedOptions);
             property.stringValue = option;
+            return option;
+        }
+
+        public static bool PropertyToggle(SerializedProperty property, params GUILayoutOption[] options)
+        {
+            return property.boolValue = EditorGUILayout.Toggle(property.boolValue, options);
         }
     }
 }

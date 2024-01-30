@@ -22,18 +22,23 @@ namespace CommonEditor.Materials
             serializedObject.Update();
 
             EditorGUILayout.PropertyField(_instancesProperty);
-            EditorGUILayout.PropertyField(_activeProperty);
 
-            var names = FindPropertyNames();
+            var names = FindPropertyNames(_valueProperty.type);
             if (names.Length > 0)
             {
-                EditorGUILayout.PropertyField(_valueProperty);
+                EditorGUILayout.BeginHorizontal();
+
+                UEditorGUILayout.PropertyToggle(_activeProperty, GUILayout.ExpandWidth(false), GUILayout.MaxWidth(15.0f));
+
                 UEditorGUILayout.PropertyPopup(_nameProperty, ref _nameIndex, names);
+
+                EditorGUILayout.EndHorizontal();
+
+                DrawPropertyField(_valueProperty);
             }
             else
             {
-                var valueType = ValueType();
-                EditorGUILayout.HelpBox($"Unable to find matching properties for type '{valueType}'", MessageType.Warning);
+                EditorGUILayout.HelpBox($"Unable to find matching properties for type '{_valueProperty.type}'", MessageType.Warning);
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -47,16 +52,21 @@ namespace CommonEditor.Materials
             _valueProperty = serializedObject.FindProperty("_value");
         }
 
-        private string ValueType()
+        private void DrawPropertyField(SerializedProperty property)
         {
-            return _valueProperty.type;
+            if (IsColor(property.type))
+            {
+                property.colorValue = EditorGUILayout.ColorField(new GUIContent(property.displayName), property.colorValue, true, true, true);
+            }
+            else
+            {
+                EditorGUILayout.PropertyField(property);
+            }
         }
 
-        private string[] FindPropertyNames()
+        private string[] FindPropertyNames(string valueType)
         {
             var result = new List<string>();
-
-            var valueType = ValueType();
 
             foreach (var instanceProperty in _instancesProperty.GetArrayElements())
             {
