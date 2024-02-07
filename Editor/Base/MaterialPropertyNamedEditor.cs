@@ -38,7 +38,10 @@ namespace CommonEditor.Materials
             }
             else
             {
-                EditorGUILayout.HelpBox($"Unable to find matching properties for type '{_valueProperty.type}'", MessageType.Warning);
+                if (_instancesProperty.arraySize > 0)
+                {
+                    EditorGUILayout.HelpBox($"Unable to find matching properties for type '{_valueProperty.type}'", MessageType.Warning);
+                }
             }
 
             serializedObject.ApplyModifiedProperties();
