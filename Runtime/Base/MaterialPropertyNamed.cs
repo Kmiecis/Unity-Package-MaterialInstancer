@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Common.Materials
@@ -6,12 +5,12 @@ namespace Common.Materials
     [ExecuteAlways]
     public abstract class MaterialPropertyNamed<T> : MonoBehaviour
     {
-        [SerializeField] protected MaterialInstance[] _instances = null;
+        [SerializeField] protected MaterialInstance _instance = null;
         [SerializeField] protected bool _active;
-        [SerializeField] protected T _value;
         [SerializeField] protected string _name;
+        [SerializeField] protected T _value;
 
-        private bool _dirty;
+        private bool _changed;
         private int _id;
 
         public bool IsActive
@@ -20,16 +19,26 @@ namespace Common.Materials
             set => SetActive(value);
         }
 
-        public T Value
-        {
-            get => _value;
-            set => SetPropertyValue(value);
-        }
-
         public string Name
         {
             get => _name;
             set => SetPropertyName(value);
+        }
+
+        public T Value
+        {
+            get => GetValue();
+            set => SetValue(value);
+        }
+
+        public T GetValue()
+        {
+            return _value;
+        }
+
+        public void SetValue(T value)
+        {
+            SetPropertyValue(value);
         }
 
         public MaterialPropertyNamed()
@@ -37,17 +46,6 @@ namespace Common.Materials
             var value = GetDefaultValue();
 
             SetPropertyValue(value);
-        }
-
-        public IEnumerable<MaterialInstance> GetInstances()
-        {
-            foreach (var instance in _instances)
-            {
-                if (instance != null)
-                {
-                    yield return instance;
-                }
-            }
         }
 
         protected abstract void ApplyPropertyValue(Material material, int id, T value);
@@ -65,20 +63,9 @@ namespace Common.Materials
             {
                 ApplyPropertyValue(_value);
             }
-            else if (_dirty)
+            else if (_changed)
             {
                 RestorePropertyValues();
-            }
-        }
-
-        private IEnumerable<Material> GetClones()
-        {
-            foreach (var instance in GetInstances())
-            {
-                if (instance.GetClone(out var clone))
-                {
-                    yield return clone;
-                }
             }
         }
 
@@ -106,26 +93,25 @@ namespace Common.Materials
 
         private void ApplyPropertyValue(T value)
         {
-            foreach (var clone in GetClones())
+            if (_instance != null &&
+                _instance.GetClone(out var clone))
             {
                 ApplyPropertyValue(clone, _id, value);
             }
 
-            _dirty = true;
+            _changed = true;
         }
 
         private void RestorePropertyValues()
         {
-            foreach (var instance in GetInstances())
+            if (_instance != null &&
+                _instance.TryGetClone(out var clone))
             {
-                if (instance.TryGetClone(out var clone))
-                {
-                    var defaultValue = ReadPropertyValue(instance.Original, _id);
-                    ApplyPropertyValue(clone, _id, defaultValue);
-                }
+                var defaultValue = ReadPropertyValue(_instance.Original, _id);
+                ApplyPropertyValue(clone, _id, defaultValue);
             }
 
-            _dirty = false;
+            _changed = false;
         }
 
         private void RefreshPropertyId()
@@ -157,7 +143,7 @@ namespace Common.Materials
 
         private void Reset()
         {
-            _instances = transform.GetComponentsInChildren<MaterialInstance>();
+            _instance = transform.GetComponentInChildren<MaterialInstance>();
         }
 #endif
     }

@@ -10,81 +10,83 @@ namespace CommonEditor.Materials
     [CustomEditor(typeof(MaterialPropertyNamed<>), true)]
     public class MaterialPropertyNamedEditor : Editor
     {
-        private SerializedProperty _instancesProperty;
+        private const float SpaceWidth = 2.0f;
+
+        protected static readonly GUIContent EmptyLabel = new GUIContent(string.Empty);
+
+        private static float ToggleSize => EditorGUIUtility.singleLineHeight;
+        private static float LabelOffset => ToggleSize + SpaceWidth;
+        private static float LabelWidth => EditorGUIUtility.labelWidth;
+        private static float FieldOffset => LabelWidth + SpaceWidth;
+
+        private SerializedProperty _instanceProperty;
         private SerializedProperty _nameProperty;
         private SerializedProperty _activeProperty;
         private SerializedProperty _valueProperty;
-
-        private int _nameIndex;
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_instancesProperty);
+            EditorGUILayout.PropertyField(_instanceProperty);
 
             var names = FindPropertyNames(_valueProperty.type);
             if (names.Length > 0)
             {
-                EditorGUILayout.BeginHorizontal();
-
-                UEditorGUILayout.PropertyToggle(_activeProperty, GUILayout.ExpandWidth(false), GUILayout.MaxWidth(15.0f));
-
-                UEditorGUILayout.PropertyPopup(_nameProperty, ref _nameIndex, names);
-
-                EditorGUILayout.EndHorizontal();
-
-                DrawPropertyField(_valueProperty);
+                var rect = EditorGUILayout.GetControlRect();
+                DrawToggle(rect, _activeProperty);
+                DrawNames(rect, _nameProperty, names);
+                DrawField(rect, _valueProperty);
             }
             else
             {
-                if (_instancesProperty.arraySize > 0)
-                {
-                    EditorGUILayout.HelpBox($"Unable to find matching properties for type '{_valueProperty.type}'", MessageType.Warning);
-                }
+                EditorGUILayout.HelpBox($"Unable to find matching properties for type '{_valueProperty.type}'", MessageType.Warning);
             }
 
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void OnEnable()
+        private void DrawToggle(Rect rect, SerializedProperty property)
         {
-            _instancesProperty = serializedObject.FindProperty("_instances");
-            _nameProperty = serializedObject.FindProperty("_name");
-            _activeProperty = serializedObject.FindProperty("_active");
-            _valueProperty = serializedObject.FindProperty("_value");
+            rect.width = ToggleSize;
+            rect.height = ToggleSize;
+            UEditorGUI.PropertyToggle(rect, property);
         }
 
-        private void DrawPropertyField(SerializedProperty property)
+        private void DrawNames(Rect rect, SerializedProperty property, string[] names)
         {
-            if (IsColor(property.type))
-            {
-                property.colorValue = EditorGUILayout.ColorField(new GUIContent(property.displayName), property.colorValue, true, true, true);
-            }
-            else
-            {
-                EditorGUILayout.PropertyField(property);
-            }
+            rect.x += LabelOffset;
+            rect.width = LabelWidth - LabelOffset;
+            UEditorGUI.PropertyPopup(rect, property, names);
+        }
+
+        private void DrawField(Rect rect, SerializedProperty property)
+        {
+            rect.x += FieldOffset;
+            rect.width -= FieldOffset;
+            CustomDrawField(rect, property);
+        }
+
+        protected virtual void CustomDrawField(Rect rect, SerializedProperty property)
+        {
+            EditorGUI.PropertyField(rect, property, EmptyLabel, true);
         }
 
         private string[] FindPropertyNames(string valueType)
         {
             var result = new List<string>();
 
-            foreach (var instanceProperty in _instancesProperty.GetArrayElements())
+            var instance = (MaterialInstance)_instanceProperty.objectReferenceValue;
+            if (instance != null)
             {
-                var instance = (MaterialInstance)instanceProperty.objectReferenceValue;
-                if (instance != null)
-                {
-                    var material = instance.Original;
+                var material = instance.Original;
 
-                    var properties = MaterialEditor.GetMaterialProperties(new Material[] { material });
-                    foreach (var property in properties)
+                var properties = MaterialEditor.GetMaterialProperties(new Material[] { material });
+                foreach (var property in properties)
+                {
+                    if (IsMatchingType(property.type, valueType))
                     {
-                        if (IsMatchingType(property.type, valueType))
-                        {
-                            result.Add(property.name);
-                        }
+                        result.Add(property.name);
                     }
                 }
             }
@@ -136,6 +138,14 @@ namespace CommonEditor.Materials
         private bool IsInt(string valueType)
         {
             return valueType == "int";
+        }
+
+        private void OnEnable()
+        {
+            _instanceProperty = serializedObject.FindProperty("_instance");
+            _activeProperty = serializedObject.FindProperty("_active");
+            _nameProperty = serializedObject.FindProperty("_name");
+            _valueProperty = serializedObject.FindProperty("_value");
         }
     }
 }
