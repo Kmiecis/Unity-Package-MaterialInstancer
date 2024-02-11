@@ -1,14 +1,14 @@
 {
-  "name": "com.kmiecis.materials",
-  "displayName": "Materials",
+  "name": "com.kmiecis.material.instancer",
+  "displayName": "MaterialInstancer",
   "author": {
     "name": "Kmiecis",
     "email": "slawekkmiecik@gmail.com"
   },
-  "description": "Scripts library that assist in managing Material runtime modifications",
+  "description": "A package allowing easy Material runtime instancing and property alteration through both Inspector and code",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Kmiecis/Unity-Package-Materials.git"
+    "url": "https://github.com/Kmiecis/Unity-Package-MaterialInstancer.git"
   }
 }
