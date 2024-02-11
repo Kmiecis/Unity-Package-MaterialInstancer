@@ -2,7 +2,7 @@
 
 ## Description
 
-A package allowing easy Material runtime instancing and property alteration through both Inspector and via code.  
+A package allowing easy Material runtime instancing and property alteration through both Inspector and code.  
 Furthermore it eases Material instance lifetime control and prevents changes to leak into source Material.
 
 ## Installation
