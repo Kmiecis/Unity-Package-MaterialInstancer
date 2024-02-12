@@ -118,6 +118,7 @@ namespace Common.Materials
         {
             var result = new Material(source);
             result.name += " (Clone)";
+            result.hideFlags = HideFlags.DontSave;
             return result;
         }
     }
