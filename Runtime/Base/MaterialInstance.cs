@@ -29,13 +29,7 @@ namespace Common.Materials
 
         public bool GetClone(out Material clone)
         {
-            if (_clone == null && _original != null)
-            {
-                _clone = CreateClone(_original);
-
-                ApplyMaterial();
-            }
-
+            SetCloned();
             return TryGetClone(out clone);
         }
 
@@ -45,8 +39,22 @@ namespace Common.Materials
             return clone != null;
         }
 
+        public void SetCloned()
+        {
+            CreateClone();
+
+            ApplyMaterial();
+        }
+
         public void Apply()
         {
+            ApplyMaterial();
+        }
+
+        public void ClearCloned()
+        {
+            DestroyClone();
+
             ApplyMaterial();
         }
 
@@ -67,6 +75,14 @@ namespace Common.Materials
             _original = value;
 
             ApplyMaterial();
+        }
+
+        private void CreateClone()
+        {
+            if (_clone == null && _original != null)
+            {
+                _clone = CreateClone(_original);
+            }
         }
 
         private void DestroyClone()
