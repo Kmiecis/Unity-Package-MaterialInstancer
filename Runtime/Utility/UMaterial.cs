@@ -34,7 +34,14 @@ namespace Common.Materials
         {
             if (target.TryGetComponent<Renderer>(out var renderer))
             {
-                return renderer.sharedMaterial ?? renderer.sharedMaterials[0];
+                if (renderer.sharedMaterial != null)
+                {
+                    return renderer.sharedMaterial;
+                }
+                if (renderer.sharedMaterials.Length > 0)
+                {
+                    return renderer.sharedMaterials[0];
+                }
             }
 
             if (depth != 0)
@@ -79,8 +86,11 @@ namespace Common.Materials
             if (target.TryGetComponent<Renderer>(out var renderer))
             {
                 var materials = renderer.sharedMaterials;
-                materials[index] = material;
-                renderer.sharedMaterials = materials;
+                if (materials.Length > index)
+                {
+                    materials[index] = material;
+                    renderer.sharedMaterials = materials;
+                }
             }
 
             if (depth != 0)

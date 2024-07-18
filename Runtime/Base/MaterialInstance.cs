@@ -29,7 +29,7 @@ namespace Common.Materials
 
         public bool GetClone(out Material clone)
         {
-            SetCloned();
+            MakeClone();
             return TryGetClone(out clone);
         }
 
@@ -39,7 +39,7 @@ namespace Common.Materials
             return clone != null;
         }
 
-        public void SetCloned()
+        public void MakeClone()
         {
             CreateClone();
 
@@ -51,7 +51,7 @@ namespace Common.Materials
             ApplyMaterial();
         }
 
-        public void ClearCloned()
+        public void ClearClone()
         {
             DestroyClone();
 
@@ -64,8 +64,7 @@ namespace Common.Materials
 
         private void ApplyMaterial()
         {
-            var material = Current;
-            ApplyMaterial(transform, material, _depth);
+            ApplyMaterial(transform, Current, _depth);
         }
 
         private void SetOriginal(Material value)
