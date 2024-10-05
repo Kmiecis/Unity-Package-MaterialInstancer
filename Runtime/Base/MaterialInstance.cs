@@ -1,24 +1,25 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Common.Materials
 {
     [ExecuteAlways]
     public abstract class MaterialInstance : MonoBehaviour
     {
-        [SerializeField] private Material _original;
+        [FormerlySerializedAs("_original")]
+        [SerializeField] private Material _source;
         [SerializeField] private int _depth;
 
         private Material _clone;
 
-        public Material Original
+        public Material Source
         {
-            get => _original;
-            set => SetOriginal(value);
+            get => _source;
         }
 
-        public Material Current
+        private Material Current
         {
-            get => _clone != null ? _clone : _original;
+            get => _clone != null ? _clone : _source;
         }
 
         public Material GetClone()
@@ -46,41 +47,43 @@ namespace Common.Materials
             ApplyMaterial();
         }
 
+        public void ClearClone()
+        {
+            RemoveMaterial();
+
+            DestroyClone();
+        }
+
         public void Apply()
         {
             ApplyMaterial();
         }
 
-        public void ClearClone()
-        {
-            DestroyClone();
-
-            ApplyMaterial();
-        }
-
-        protected abstract Material ReadMaterial(Transform target, int depth);
-
         protected abstract void ApplyMaterial(Transform target, Material material, int depth);
+
+        protected abstract void RemoveMaterial(Material material, int depth);
 
         private void ApplyMaterial()
         {
-            ApplyMaterial(transform, Current, _depth);
+            if (_clone != null)
+            {
+                ApplyMaterial(transform, _clone, _depth);
+            }
         }
 
-        private void SetOriginal(Material value)
+        private void RemoveMaterial()
         {
-            DestroyClone();
-
-            _original = value;
-
-            ApplyMaterial();
+            if (_clone != null)
+            {
+                RemoveMaterial(_clone, _depth);
+            }
         }
 
         private void CreateClone()
         {
-            if (_clone == null && _original != null)
+            if (_clone == null && _source != null)
             {
-                _clone = CreateClone(_original);
+                _clone = CreateClone(_source);
             }
         }
 
@@ -93,16 +96,9 @@ namespace Common.Materials
             }
         }
 
-        private void Start()
-        {
-            ApplyMaterial();
-        }
-
         private void OnDestroy()
         {
-            DestroyClone();
-
-            ApplyMaterial();
+            ClearClone();
         }
 
 #if UNITY_EDITOR
@@ -110,22 +106,22 @@ namespace Common.Materials
 
         private void OnValidate()
         {
-            if (_cached != _original)
+            if (_cached != _source)
             {
-                DestroyClone();
-
-                _cached = _original;
+                _cached = _source;
             }
 
-            ApplyMaterial();
+            if (_clone != null)
+            {
+                ClearClone();
+
+                MakeClone();
+            }
         }
 
         private void Reset()
         {
             _depth = transform.GetDepth();
-            _original = ReadMaterial(transform, _depth);
-
-            _cached = _original;
         }
 #endif
 

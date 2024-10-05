@@ -91,7 +91,7 @@ namespace Common.Materials
             if (_instance != null &&
                 _instance.TryGetClone(out var clone))
             {
-                var defaultValue = ReadPropertyValue(_instance.Original);
+                var defaultValue = ReadPropertyValue(_instance.Source);
                 ApplyPropertyValue(clone, defaultValue);
             }
 

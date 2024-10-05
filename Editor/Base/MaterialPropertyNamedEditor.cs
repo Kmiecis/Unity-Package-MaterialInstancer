@@ -79,7 +79,7 @@ namespace CommonEditor.Materials
             var instance = (MaterialInstance)_instanceProperty.objectReferenceValue;
             if (instance != null)
             {
-                var material = instance.Original;
+                var material = instance.Source;
 
                 var properties = MaterialEditor.GetMaterialProperties(new Material[] { material });
                 foreach (var property in properties)

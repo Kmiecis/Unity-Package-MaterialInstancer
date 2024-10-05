@@ -1,9 +1,26 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Common.Materials
 {
     internal static class Extensions
     {
+        #region Array
+        public static T RevokeAt<T>(this IList<T> self, int index)
+        {
+            var result = self[index];
+            self.RemoveAt(index);
+            return result;
+        }
+        #endregion
+
+        #region Renderer
+        public static void SetSharedMaterials(this Renderer self, List<Material> materials)
+        {
+            self.sharedMaterials = materials.ToArray();
+        }
+        #endregion
+
         #region Object
         public static void Destroy(this Object self)
         {
