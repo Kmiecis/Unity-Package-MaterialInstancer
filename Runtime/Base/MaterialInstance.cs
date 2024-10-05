@@ -17,7 +17,7 @@ namespace Common.Materials
             get => _source;
         }
 
-        private Material Current
+        public Material Current
         {
             get => _clone != null ? _clone : _source;
         }
@@ -42,16 +42,20 @@ namespace Common.Materials
 
         public void MakeClone()
         {
-            CreateClone();
-
-            ApplyMaterial();
+            if (CreateClone())
+            {
+                ApplyMaterial();
+            }
         }
 
         public void ClearClone()
         {
-            RemoveMaterial();
+            if (_clone != null)
+            {
+                RemoveMaterial();
 
-            DestroyClone();
+                DestroyClone();
+            }
         }
 
         public void Apply()
@@ -65,35 +69,29 @@ namespace Common.Materials
 
         private void ApplyMaterial()
         {
-            if (_clone != null)
-            {
-                ApplyMaterial(transform, _clone, _depth);
-            }
+            ApplyMaterial(transform, Current, _depth);
         }
 
         private void RemoveMaterial()
         {
-            if (_clone != null)
-            {
-                RemoveMaterial(_clone, _depth);
-            }
+            RemoveMaterial(Current, _depth);
         }
 
-        private void CreateClone()
+        private bool CreateClone()
         {
             if (_clone == null && _source != null)
             {
                 _clone = CreateClone(_source);
+
+                return true;
             }
+            return false;
         }
 
         private void DestroyClone()
         {
-            if (_clone != null)
-            {
-                _clone.Destroy();
-                _clone = null;
-            }
+            _clone.Destroy();
+            _clone = null;
         }
 
         private void OnDestroy()
