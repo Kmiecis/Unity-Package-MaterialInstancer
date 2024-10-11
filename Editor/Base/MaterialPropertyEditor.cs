@@ -63,7 +63,7 @@ namespace CommonEditor.Materials
 
         private void OnEnable()
         {
-            _instanceProperty = serializedObject.FindProperty("_instance");
+            _instanceProperty = serializedObject.FindProperty("_instances");
             _activeProperty = serializedObject.FindProperty("_active");
             _valueProperty = serializedObject.FindProperty("_value");
         }

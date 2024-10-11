@@ -1,5 +1,6 @@
 using Common.Materials;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using static UnityEditor.MaterialProperty;
@@ -19,7 +20,7 @@ namespace CommonEditor.Materials
         private static float LabelWidth => EditorGUIUtility.labelWidth;
         private static float FieldOffset => LabelWidth + SpaceWidth;
 
-        private SerializedProperty _instanceProperty;
+        private SerializedProperty _instancesProperty;
         private SerializedProperty _nameProperty;
         private SerializedProperty _activeProperty;
         private SerializedProperty _valueProperty;
@@ -28,10 +29,10 @@ namespace CommonEditor.Materials
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_instanceProperty);
+            EditorGUILayout.PropertyField(_instancesProperty);
 
             var names = FindPropertyNames(_valueProperty.type);
-            if (names.Length > 0)
+            if (names != null)
             {
                 var rect = EditorGUILayout.GetControlRect();
                 DrawToggle(rect, _activeProperty);
@@ -74,22 +75,41 @@ namespace CommonEditor.Materials
 
         private string[] FindPropertyNames(string valueType)
         {
-            var result = new List<string>();
+            HashSet<string> result = null;
 
-            var instance = (MaterialInstance)_instanceProperty.objectReferenceValue;
-            if (instance != null)
+            var instances = (MaterialInstance[])_instancesProperty.GetValue();
+            if (instances != null && instances.Length > 0)
             {
-                var material = instance.Source;
-
-                var properties = MaterialEditor.GetMaterialProperties(new Material[] { material });
-                foreach (var property in properties)
+                foreach (var instance in instances)
                 {
-                    if (IsMatchingType(property.type, valueType))
+                    var material = instance.Source;
+                    if (material != null)
                     {
-                        result.Add(property.name);
+                        var names = new HashSet<string>();
+
+                        var properties = MaterialEditor.GetMaterialProperties(new Material[] { material });
+                        foreach (var property in properties)
+                        {
+                            if (IsMatchingType(property.type, valueType))
+                            {
+                                names.Add(property.name);
+                            }
+                        }
+
+                        if (result == null)
+                        {
+                            result = names;
+                        }
+                        else
+                        {
+                            result.IntersectWith(names);
+                        }
                     }
                 }
             }
+
+            if (result == null || result.Count == 0)
+                return null;
 
             return result.ToArray();
         }
@@ -142,7 +162,7 @@ namespace CommonEditor.Materials
 
         private void OnEnable()
         {
-            _instanceProperty = serializedObject.FindProperty("_instance");
+            _instancesProperty = serializedObject.FindProperty("_instances");
             _activeProperty = serializedObject.FindProperty("_active");
             _nameProperty = serializedObject.FindProperty("_name");
             _valueProperty = serializedObject.FindProperty("_value");

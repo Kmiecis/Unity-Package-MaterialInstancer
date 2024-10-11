@@ -14,13 +14,6 @@ namespace Common.Materials
         }
         #endregion
 
-        #region Renderer
-        public static void SetSharedMaterials(this Renderer self, List<Material> materials)
-        {
-            self.sharedMaterials = materials.ToArray();
-        }
-        #endregion
-
         #region Object
         public static void Destroy(this Object self)
         {
@@ -32,6 +25,13 @@ namespace Common.Materials
             {
                 Object.DestroyImmediate(self);
             }
+        }
+        #endregion
+
+        #region Renderer
+        public static void SetSharedMaterials(this Renderer self, List<Material> materials)
+        {
+            self.sharedMaterials = materials.ToArray();
         }
         #endregion
 
