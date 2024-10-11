@@ -5,6 +5,24 @@ namespace Common.Materials
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialColor))]
     public class MaterialColor : MaterialPropertyNamed<Color>
     {
+        public float Alpha
+        {
+            get => GetAlpha();
+            set => SetAlpha(value);
+        }
+
+        public float GetAlpha()
+        {
+            var color = GetValue();
+            return color.a;
+        }
+
+        public void SetAlpha(float a)
+        {
+            var color = new Color(_value.r, _value.g, _value.b, a);
+            SetValue(color);
+        }
+
         protected override void ApplyPropertyValue(Material material, int id, Color value)
             => material.SetColor(id, value);
 
