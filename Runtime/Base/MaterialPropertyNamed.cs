@@ -8,7 +8,7 @@ namespace Common.Materials
     }
 
     [ExecuteAlways]
-    public abstract class MaterialPropertyNamed<T> : MaterialPropertyBase<T>, IMaterialPropertyNamedVerifier
+    public abstract class MaterialPropertyNamed<T> : MaterialProperty<T>, IMaterialPropertyNamedVerifier
     {
         [SerializeField] protected string _name;
 
@@ -26,35 +26,22 @@ namespace Common.Materials
 
         protected abstract T ReadPropertyValue(Material material, int id);
 
+        protected override void ApplyPropertyValue(Material material, T value)
+        {
+            ApplyPropertyValue(material, _id, value);
+        }
+
+        protected override T ReadPropertyValue(Material material)
+        {
+            return ReadPropertyValue(material, _id);
+        }
+
         private void SetPropertyName(string value)
         {
             _name = value;
 
             RefreshPropertyId();
             RefreshPropertyValue();
-        }
-
-        protected override void ApplyPropertyValue(T value)
-        {
-            foreach (var instance in GetInstances())
-            {
-                if (instance.GetClone(out var clone))
-                {
-                    ApplyPropertyValue(clone, _id, value);
-                }
-            }
-        }
-
-        protected override void RestorePropertyValues()
-        {
-            foreach (var instance in GetInstances())
-            {
-                if (instance.TryGetClone(out var clone))
-                {
-                    var defaultValue = ReadPropertyValue(instance.Source, _id);
-                    ApplyPropertyValue(clone, _id, defaultValue);
-                }
-            }
         }
 
         private void RefreshPropertyId()

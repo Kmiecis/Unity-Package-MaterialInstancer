@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInstanceForRenderer))]
-    public class MaterialInstanceForRenderer : MaterialInstance
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialApplierForRenderer))]
+    public class MaterialApplierForRenderer : MaterialApplier
     {
         [SerializeField] private int _index;
 
-        private readonly List<Renderer> _renderers;
-        private readonly List<Material> _originals;
+        private List<Renderer> _renderers;
+        private List<Material> _originals;
 
-        public MaterialInstanceForRenderer()
+        public MaterialApplierForRenderer()
         {
             _renderers = new List<Renderer>();
             _originals = new List<Material>();
@@ -66,6 +66,8 @@ namespace Common.Materials
 
                 if (original != null)
                 {
+                    while (materials.Count <= _index)
+                        materials.Add(null);
                     materials[_index] = original;
                 }
                 else

@@ -4,17 +4,17 @@ using UnityEngine;
 namespace Common.Materials
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(MaterialInstance), true)]
-    public class MaterialInstanceEditor : Editor
+    [CustomEditor(typeof(MaterialApplier), true)]
+    public class MaterialApplierEditor : Editor
     {
-        private MaterialInstance Script
-            => (MaterialInstance)target;
+        private MaterialApplier Script
+            => (MaterialApplier)target;
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            if (Script.TryGetClone(out _))
+            if (Script.HasClone())
             {
                 if (GUILayout.Button("Clear"))
                 {
@@ -25,7 +25,7 @@ namespace Common.Materials
             {
                 if (GUILayout.Button("Apply"))
                 {
-                    Script.MakeClone();
+                    Script.ApplyClone();
                 }
             }
         }

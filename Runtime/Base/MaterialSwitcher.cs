@@ -7,8 +7,16 @@ namespace Common.Materials
     {
         [SerializeField] private Material _original;
         [SerializeField] private Material _switched;
+        [Space]
+        [SerializeField] private Transform _target;
         [SerializeField] private int _depth;
         [SerializeField] private bool _isSwithed;
+
+        public Transform Target
+        {
+            get => _target ?? transform;
+            set => _target = value;
+        }
 
         public Material Current
         {
@@ -42,13 +50,20 @@ namespace Common.Materials
         public void SetSwitched()
         {
             _isSwithed = true;
+
             SetCurrentMaterial();
         }
 
         public void SetOriginal()
         {
             _isSwithed = false;
+
             SetCurrentMaterial();
+        }
+
+        public void Flip()
+        {
+            SetSwitched(!IsSwitched);
         }
 
         protected abstract Material GetMaterial(Transform target, int depth);
@@ -73,6 +88,7 @@ namespace Common.Materials
 
         private void Reset()
         {
+            _target = transform;
             _depth = transform.GetDepth();
             _original = GetMaterial(transform, _depth);
         }

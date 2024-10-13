@@ -4,20 +4,13 @@ using UnityEngine.Serialization;
 namespace Common.Materials
 {
     [ExecuteAlways]
-    public abstract class MaterialInstance : MonoBehaviour
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInstance))]
+    public class MaterialInstance : MonoBehaviour
     {
-        [SerializeField] private Transform _target;
         [FormerlySerializedAs("_original")]
         [SerializeField] private Material _source;
-        [SerializeField] private int _depth;
 
         private Material _clone;
-
-        public Transform Target
-        {
-            get => _target ?? transform;
-            set => _target = value;
-        }
 
         public Material Source
         {
@@ -31,8 +24,8 @@ namespace Common.Materials
 
         public Material GetClone()
         {
-            GetClone(out var result);
-            return result;
+            MakeClone();
+            return _clone;
         }
 
         public bool GetClone(out Material clone)
@@ -43,48 +36,10 @@ namespace Common.Materials
 
         public bool TryGetClone(out Material clone)
         {
-            clone = _clone;
-            return clone != null;
+            return (clone = _clone) != null;
         }
 
-        public void MakeClone()
-        {
-            if (CreateClone())
-            {
-                ApplyMaterial();
-            }
-        }
-
-        public void ClearClone()
-        {
-            if (_clone != null)
-            {
-                RemoveMaterial();
-
-                DestroyClone();
-            }
-        }
-
-        public void Apply()
-        {
-            ApplyMaterial();
-        }
-
-        protected abstract void ApplyMaterial(Transform target, Material material, int depth);
-
-        protected abstract void RemoveMaterial(Material material, int depth);
-
-        private void ApplyMaterial()
-        {
-            ApplyMaterial(Target, Current, _depth);
-        }
-
-        private void RemoveMaterial()
-        {
-            RemoveMaterial(Current, _depth);
-        }
-
-        private bool CreateClone()
+        public bool MakeClone()
         {
             if (_clone == null && _source != null)
             {
@@ -95,10 +50,16 @@ namespace Common.Materials
             return false;
         }
 
-        private void DestroyClone()
+        public bool ClearClone()
         {
-            _clone.Destroy();
-            _clone = null;
+            if (_clone != null)
+            {
+                _clone.Destroy();
+                _clone = null;
+
+                return true;
+            }
+            return false;
         }
 
         private void OnDestroy()
@@ -122,12 +83,6 @@ namespace Common.Materials
 
                 MakeClone();
             }
-        }
-
-        private void Reset()
-        {
-            _target = transform;
-            _depth = transform.GetDepth();
         }
 #endif
 
