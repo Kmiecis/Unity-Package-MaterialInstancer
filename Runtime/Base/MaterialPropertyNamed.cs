@@ -2,8 +2,13 @@ using UnityEngine;
 
 namespace Common.Materials
 {
+    public interface IMaterialPropertyNamedVerifier
+    {
+        bool CanHandleProperty(Material material, string name);
+    }
+
     [ExecuteAlways]
-    public abstract class MaterialPropertyNamed<T> : MaterialPropertyBase<T>
+    public abstract class MaterialPropertyNamed<T> : MaterialPropertyBase<T>, IMaterialPropertyNamedVerifier
     {
         [SerializeField] protected string _name;
 
@@ -14,6 +19,8 @@ namespace Common.Materials
             get => _name;
             set => SetPropertyName(value);
         }
+
+        public abstract bool CanHandleProperty(Material material, string name);
 
         protected abstract void ApplyPropertyValue(Material material, int id, T value);
 

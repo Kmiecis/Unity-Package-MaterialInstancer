@@ -23,7 +23,7 @@ namespace Common.Materials
             }
             else
             {
-                if (GUILayout.Button("Clone"))
+                if (GUILayout.Button("Apply"))
                 {
                     Script.MakeClone();
                 }

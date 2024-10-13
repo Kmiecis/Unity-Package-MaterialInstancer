@@ -6,11 +6,18 @@ namespace Common.Materials
     [ExecuteAlways]
     public abstract class MaterialInstance : MonoBehaviour
     {
+        [SerializeField] private Transform _target;
         [FormerlySerializedAs("_original")]
         [SerializeField] private Material _source;
         [SerializeField] private int _depth;
 
         private Material _clone;
+
+        public Transform Target
+        {
+            get => _target ?? transform;
+            set => _target = value;
+        }
 
         public Material Source
         {
@@ -69,7 +76,7 @@ namespace Common.Materials
 
         private void ApplyMaterial()
         {
-            ApplyMaterial(transform, Current, _depth);
+            ApplyMaterial(Target, Current, _depth);
         }
 
         private void RemoveMaterial()
@@ -119,6 +126,7 @@ namespace Common.Materials
 
         private void Reset()
         {
+            _target = transform;
             _depth = transform.GetDepth();
         }
 #endif

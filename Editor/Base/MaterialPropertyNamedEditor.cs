@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.MaterialProperty;
 
 namespace CommonEditor.Materials
 {
@@ -11,19 +10,19 @@ namespace CommonEditor.Materials
     [CustomEditor(typeof(MaterialPropertyNamed<>), true)]
     public class MaterialPropertyNamedEditor : Editor
     {
-        private const float SpaceWidth = 2.0f;
-
-        protected static readonly GUIContent EmptyLabel = new GUIContent(string.Empty);
+        protected static readonly GUIContent EmptyLabel = new GUIContent(" ");
 
         private static float ToggleSize => EditorGUIUtility.singleLineHeight;
-        private static float LabelOffset => ToggleSize + SpaceWidth;
+        private static float LabelOffset => ToggleSize + UEditorGUIUtility.SpaceWidth;
         private static float LabelWidth => EditorGUIUtility.labelWidth;
-        private static float FieldOffset => LabelWidth + SpaceWidth;
+        private static float FieldOffset => LabelWidth + UEditorGUIUtility.SpaceWidth;
 
         private SerializedProperty _instancesProperty;
         private SerializedProperty _nameProperty;
         private SerializedProperty _activeProperty;
         private SerializedProperty _valueProperty;
+
+        private IMaterialPropertyNamedVerifier Script => (IMaterialPropertyNamedVerifier)target;
 
         public override void OnInspectorGUI()
         {
@@ -31,7 +30,7 @@ namespace CommonEditor.Materials
 
             EditorGUILayout.PropertyField(_instancesProperty);
 
-            var names = FindPropertyNames(_valueProperty.type);
+            var names = FindPropertyNames();
             if (names != null)
             {
                 var rect = EditorGUILayout.GetControlRect();
@@ -65,6 +64,8 @@ namespace CommonEditor.Materials
         {
             rect.x += FieldOffset;
             rect.width -= FieldOffset;
+
+            using var labelWidthScope = new UEditorGUIUtility.LabelWidthScope(UEditorGUIUtility.IndentWidth);
             CustomDrawField(rect, property);
         }
 
@@ -73,7 +74,7 @@ namespace CommonEditor.Materials
             EditorGUI.PropertyField(rect, property, EmptyLabel, true);
         }
 
-        private string[] FindPropertyNames(string valueType)
+        private string[] FindPropertyNames()
         {
             HashSet<string> result = null;
 
@@ -90,7 +91,7 @@ namespace CommonEditor.Materials
                         var properties = MaterialEditor.GetMaterialProperties(new Material[] { material });
                         foreach (var property in properties)
                         {
-                            if (IsMatchingType(property.type, valueType))
+                            if (Script.CanHandleProperty(material, property.name))
                             {
                                 names.Add(property.name);
                             }
@@ -112,52 +113,6 @@ namespace CommonEditor.Materials
                 return null;
 
             return result.ToArray();
-        }
-
-        private bool IsMatchingType(PropType propertyType, string valueType)
-        {
-            switch (propertyType)
-            {
-                case PropType.Color: return IsColor(valueType);
-                case PropType.Vector: return IsVector(valueType);
-                case PropType.Float:
-                case PropType.Range: return IsFloat(valueType);
-                case PropType.Texture: return IsTexture(valueType);
-                case PropType.Int: return IsInt(valueType);
-            }
-            return false;
-        }
-
-        private bool IsColor(string valueType)
-        {
-            return valueType == "Color";
-        }
-
-        private bool IsVector(string valueType)
-        {
-            return (
-                valueType == "Vector2" ||
-                valueType == "Vector3" ||
-                valueType == "Vector4"
-            );
-        }
-
-        private bool IsFloat(string valueType)
-        {
-            return valueType == "float";
-        }
-
-        private bool IsTexture(string valueType)
-        {
-            return (
-                valueType.Contains("Texture") ||
-                valueType == "Vector2" // Texture Scale and Offset
-            );
-        }
-
-        private bool IsInt(string valueType)
-        {
-            return valueType == "int";
         }
 
         private void OnEnable()

@@ -8,21 +8,21 @@ namespace CommonEditor.Materials
     [CustomEditor(typeof(MaterialVector4))]
     public class MaterialVector4Editor : MaterialPropertyNamedEditor
     {
-        private const float LabelWdith = 15.0f;
-
         protected override void CustomDrawField(Rect rect, SerializedProperty property)
         {
-            var fieldWidth = rect.width * 0.25f;
+            using var labelWidthScope = new UEditorGUIUtility.LabelWidthScope(UEditorGUIUtility.IndentWidth);
+
+            rect.x += UEditorGUIUtility.IndentWidth;
+            rect.width -= UEditorGUIUtility.IndentWidth + 3 * UEditorGUIUtility.SpaceWidth;
+
+            rect.width = rect.width * 0.25f;
             foreach (SerializedProperty child in property.Copy())
             {
-                rect.width = LabelWdith;
-                EditorGUI.LabelField(rect, child.displayName);
+                var label = new GUIContent(child.displayName);
 
-                rect.x += rect.width;
-                rect.width = fieldWidth - rect.width - 3.0f;
-                UEditorGUI.PropertyFloatField(rect, child);
+                UEditorGUI.PropertyFloatField(rect, label, child);
 
-                rect.x += rect.width + 4.0f;
+                rect.x += rect.width + UEditorGUIUtility.SpaceWidth;
             }
         }
     }

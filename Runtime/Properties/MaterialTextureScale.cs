@@ -5,6 +5,9 @@ namespace Common.Materials
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialTextureScale))]
     public class MaterialTextureScale : MaterialPropertyNamed<Vector2>
     {
+        public override bool CanHandleProperty(Material material, string name)
+            => material.HasTexture(name);
+
         protected override void ApplyPropertyValue(Material material, int id, Vector2 value)
             => material.SetTextureScale(id, value);
 

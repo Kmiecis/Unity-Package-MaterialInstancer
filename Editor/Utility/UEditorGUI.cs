@@ -12,9 +12,16 @@ namespace CommonEditor.Materials
             return result;
         }
 
-        public static float PropertyFloatField(Rect rect, SerializedProperty property)
+        public static float PropertyFloatField(Rect rect, GUIContent label, SerializedProperty property)
         {
-            var result = EditorGUI.FloatField(rect, property.floatValue);
+            var result = EditorGUI.FloatField(rect, label, property.floatValue);
+            property.floatValue = result;
+            return result;
+        }
+
+        public static float PropertySliderField(Rect rect, SerializedProperty property, float leftValue, float rightValue)
+        {
+            var result = EditorGUI.Slider(rect, property.floatValue, leftValue, rightValue);
             property.floatValue = result;
             return result;
         }

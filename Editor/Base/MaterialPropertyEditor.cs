@@ -8,14 +8,12 @@ namespace CommonEditor.Materials
     [CustomEditor(typeof(MaterialProperty<>), true)]
     public class MaterialPropertyEditor : Editor
     {
-        private const float SpaceWidth = 2.0f;
-
         protected static readonly GUIContent EmptyLabel = new GUIContent(string.Empty);
 
         private static float ToggleSize => EditorGUIUtility.singleLineHeight;
-        private static float LabelOffset => ToggleSize + SpaceWidth;
+        private static float LabelOffset => ToggleSize + UEditorGUIUtility.SpaceWidth;
         private static float LabelWidth => EditorGUIUtility.labelWidth;
-        private static float FieldOffset => LabelWidth + SpaceWidth;
+        private static float FieldOffset => LabelWidth + UEditorGUIUtility.SpaceWidth;
 
         private SerializedProperty _instanceProperty;
         private SerializedProperty _activeProperty;

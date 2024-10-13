@@ -5,6 +5,13 @@ namespace Common.Materials
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInteger))]
     public class MaterialInteger : MaterialPropertyNamed<int>
     {
+        public override bool CanHandleProperty(Material material, string name)
+#if UNITY_2021
+            => material.HasInteger(name);
+#else
+            => material.HasInt(name);
+#endif
+
         protected override void ApplyPropertyValue(Material material, int id, int value)
 #if UNITY_2021
             => material.SetInteger(id, value);

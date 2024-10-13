@@ -23,6 +23,9 @@ namespace Common.Materials
             SetValue(color);
         }
 
+        public override bool CanHandleProperty(Material material, string name)
+            => material.HasColor(name);
+
         protected override void ApplyPropertyValue(Material material, int id, Color value)
             => material.SetColor(id, value);
 
