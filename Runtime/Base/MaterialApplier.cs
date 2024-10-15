@@ -59,6 +59,17 @@ namespace Common.Materials
             }
         }
 
+        public void RemoveClone()
+        {
+            foreach (var instance in GetInstances())
+            {
+                if (instance.TryGetClone(out var material))
+                {
+                    RemoveMaterial(Target, material, _depth);
+                }
+            }
+        }
+
         public void ClearClone()
         {
             foreach (var instance in GetInstances())
