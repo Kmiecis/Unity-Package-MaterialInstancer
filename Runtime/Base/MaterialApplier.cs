@@ -12,7 +12,7 @@ namespace Common.Materials
         public Transform Target
         {
             get => _target ?? transform;
-            set => _target = value;
+            set => SetTarget(value);
         }
 
         public bool HasClone()
@@ -65,7 +65,7 @@ namespace Common.Materials
             {
                 if (instance.TryGetClone(out var material))
                 {
-                    RemoveMaterial(material, _depth);
+                    RemoveMaterial(Target, material, _depth);
                     
                     instance.ClearClone();
                 }
@@ -85,17 +85,29 @@ namespace Common.Materials
 
         protected abstract void ApplyMaterial(Transform target, Material material, int depth);
 
-        protected abstract void RemoveMaterial(Material material, int depth);
+        protected abstract void RemoveMaterial(Transform target, Material material, int depth);
         
-#if UNITY_EDITOR
+        private void SetTarget(Transform target)
+        {
+            if (HasClone())
+            {
+                ClearClone();
+
+                _target = target;
+
+                ApplyClone();
+            }
+        }
+
         private void OnDestroy()
         {
             ClearClone();
         }
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
-            ReapplyClone();
+            ClearClone();
         }
 
         private void Reset()

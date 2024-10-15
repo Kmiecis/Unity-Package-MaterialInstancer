@@ -49,6 +49,11 @@ namespace Common.Materials
             _id = Shader.PropertyToID(_name);
         }
 
+        private void Awake()
+        {
+            RefreshPropertyId();
+        }
+
 #if UNITY_EDITOR
         protected override void OnValidate()
         {

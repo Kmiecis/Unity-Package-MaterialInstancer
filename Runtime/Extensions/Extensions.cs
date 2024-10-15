@@ -12,6 +12,12 @@ namespace Common.Materials
             self.RemoveAt(index);
             return result;
         }
+
+        public static bool TryIndexOf<T>(this IList<T> self, T item, out int index)
+        {
+            index = self.IndexOf(item);
+            return index != -1;
+        }
         #endregion
 
         #region Object

@@ -38,14 +38,28 @@ namespace Common.Materials
             }
         }
 
-        protected override void RemoveMaterial(Material material, int depth)
+        protected override void RemoveMaterial(Transform target, Material material, int depth)
         {
-            for (int i = _graphics.Count - 1; i > -1; --i)
+            if (target.TryGetComponent<Graphic>(out var graphic))
             {
-                var graphic = _graphics.RevokeAt(i);
-                var original = _originals.RevokeAt(i);
+                if (_graphics.TryIndexOf(graphic, out var index))
+                {
+                    _graphics.RemoveAt(index);
+                    var original = _originals.RevokeAt(index);
 
-                graphic.material = original;
+                    graphic.material = original;
+                }
+            }
+
+            if (depth != 0)
+            {
+                foreach (Transform child in target)
+                {
+                    if (!child.TryGetComponent<MaterialBlocker>(out _))
+                    {
+                        RemoveMaterial(child, material, depth - 1);
+                    }
+                }
             }
         }
     }

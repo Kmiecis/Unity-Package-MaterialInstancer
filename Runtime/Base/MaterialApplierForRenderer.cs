@@ -21,25 +21,22 @@ namespace Common.Materials
         {
             if (target.TryGetComponent<Renderer>(out var renderer))
             {
-                _renderers.Add(renderer);
-
                 var materials = new List<Material>();
-
                 renderer.GetSharedMaterials(materials);
+
                 if (-1 < _index && _index < materials.Count)
                 {
+                    _renderers.Add(renderer);
                     _originals.Add(materials[_index]);
 
                     materials[_index] = material;
                 }
                 else
                 {
-                    _originals.Add(null);
-
                     materials.Add(material);
                 }
 
-                renderer.sharedMaterials = materials.ToArray();
+                renderer.SetSharedMaterials(materials);
             }
 
             if (depth != 0)
@@ -54,20 +51,18 @@ namespace Common.Materials
             }
         }
 
-        protected override void RemoveMaterial(Material material, int depth)
+        protected override void RemoveMaterial(Transform target, Material material, int depth)
         {
-            for (int i = _renderers.Count - 1; i > -1; --i)
+            if (target.TryGetComponent<Renderer>(out var renderer))
             {
-                var renderer = _renderers.RevokeAt(i);
-                var original = _originals.RevokeAt(i);
-
                 var materials = new List<Material>();
                 renderer.GetSharedMaterials(materials);
 
-                if (original != null)
+                if (_renderers.TryIndexOf(renderer, out var index))
                 {
-                    while (materials.Count <= _index)
-                        materials.Add(null);
+                    _renderers.RemoveAt(index);
+                    var original = _originals.RevokeAt(index);
+
                     materials[_index] = original;
                 }
                 else
@@ -76,6 +71,17 @@ namespace Common.Materials
                 }
 
                 renderer.SetSharedMaterials(materials);
+            }
+
+            if (depth != 0)
+            {
+                foreach (Transform child in target)
+                {
+                    if (!child.TryGetComponent<MaterialBlocker>(out _))
+                    {
+                        RemoveMaterial(child, material, depth - 1);
+                    }
+                }
             }
         }
     }
