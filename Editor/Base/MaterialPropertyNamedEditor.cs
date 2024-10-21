@@ -12,14 +12,11 @@ namespace CommonEditor.Materials
     {
         protected static readonly GUIContent EmptyLabel = new GUIContent(" ");
 
-        private static float ToggleSize => EditorGUIUtility.singleLineHeight;
-        private static float LabelOffset => ToggleSize + UEditorGUIUtility.SpaceWidth;
         private static float LabelWidth => EditorGUIUtility.labelWidth;
         private static float FieldOffset => LabelWidth + UEditorGUIUtility.SpaceWidth;
 
         private SerializedProperty _instancesProperty;
         private SerializedProperty _nameProperty;
-        private SerializedProperty _activeProperty;
         private SerializedProperty _valueProperty;
 
         private IMaterialPropertyNamedVerifier Script => (IMaterialPropertyNamedVerifier)target;
@@ -34,7 +31,6 @@ namespace CommonEditor.Materials
             if (names != null)
             {
                 var rect = EditorGUILayout.GetControlRect();
-                DrawToggle(rect, _activeProperty);
                 DrawNames(rect, _nameProperty, names);
                 DrawField(rect, _valueProperty);
             }
@@ -46,17 +42,9 @@ namespace CommonEditor.Materials
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawToggle(Rect rect, SerializedProperty property)
-        {
-            rect.width = ToggleSize;
-            rect.height = ToggleSize;
-            UEditorGUI.PropertyToggle(rect, property);
-        }
-
         private void DrawNames(Rect rect, SerializedProperty property, string[] names)
         {
-            rect.x += LabelOffset;
-            rect.width = LabelWidth - LabelOffset;
+            rect.width = LabelWidth;
             UEditorGUI.PropertyPopup(rect, property, names);
         }
 
@@ -64,13 +52,12 @@ namespace CommonEditor.Materials
         {
             rect.x += FieldOffset;
             rect.width -= FieldOffset;
-
-            using var labelWidthScope = new UEditorGUIUtility.LabelWidthScope(UEditorGUIUtility.IndentWidth);
             CustomDrawField(rect, property);
         }
 
         protected virtual void CustomDrawField(Rect rect, SerializedProperty property)
         {
+            using var labelWidthScope = new UEditorGUIUtility.LabelWidthScope(UEditorGUIUtility.IndentWidth);
             EditorGUI.PropertyField(rect, property, EmptyLabel, true);
         }
 
@@ -118,7 +105,6 @@ namespace CommonEditor.Materials
         private void OnEnable()
         {
             _instancesProperty = serializedObject.FindProperty("_instances");
-            _activeProperty = serializedObject.FindProperty("_active");
             _nameProperty = serializedObject.FindProperty("_name");
             _valueProperty = serializedObject.FindProperty("_value");
         }

@@ -7,16 +7,9 @@ namespace Common.Materials
     public abstract class MaterialProperty<T> : MonoBehaviour
     {
         [SerializeField] protected MaterialInstance[] _instances;
-        [SerializeField] protected bool _active;
         [SerializeField] protected T _value;
 
         private bool _changed;
-
-        public bool IsActive
-        {
-            get => _active;
-            set => SetActive(value);
-        }
 
         public T GetValue()
         {
@@ -32,13 +25,6 @@ namespace Common.Materials
         {
             get => GetValue();
             set => SetValue(value);
-        }
-
-        public MaterialProperty()
-        {
-            var value = GetDefaultValue();
-
-            SetPropertyValue(value);
         }
 
         public IEnumerable<MaterialInstance> GetInstances()
@@ -59,7 +45,7 @@ namespace Common.Materials
 
         protected void RefreshPropertyValue()
         {
-            if (_active)
+            if (enabled)
             {
                 ApplyPropertyValues();
 
@@ -71,13 +57,6 @@ namespace Common.Materials
 
                 _changed = false;
             }
-        }
-
-        private void SetActive(bool value)
-        {
-            _active = value;
-
-            RefreshPropertyValue();
         }
 
         private void SetPropertyValue(T value)
@@ -114,6 +93,16 @@ namespace Common.Materials
             }
         }
 
+        private void OnEnable()
+        {
+            RefreshPropertyValue();
+        }
+
+        private void OnDisable()
+        {
+            RefreshPropertyValue();
+        }
+
         private void Start()
         {
             RefreshPropertyValue();
@@ -138,6 +127,9 @@ namespace Common.Materials
         private void Reset()
         {
             _instances = transform.GetComponentsInChildren<MaterialInstance>();
+
+            var value = GetDefaultValue();
+            SetPropertyValue(value);
         }
 #endif
     }

@@ -1,14 +1,12 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Common.Materials
 {
     [ExecuteAlways]
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInstance))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Instance")]
     public class MaterialInstance : MonoBehaviour
     {
-        [FormerlySerializedAs("_original")]
-        [SerializeField] private Material _source;
+        [SerializeField] private Material _source = null;
 
         private Material _clone;
 
@@ -20,6 +18,11 @@ namespace Common.Materials
         public Material Current
         {
             get => _clone != null ? _clone : _source;
+        }
+
+        public bool HasClone()
+        {
+            return _clone != null;
         }
 
         public Material GetClone()
@@ -66,25 +69,6 @@ namespace Common.Materials
         {
             ClearClone();
         }
-
-#if UNITY_EDITOR
-        private Material _cached;
-
-        private void OnValidate()
-        {
-            if (_cached != _source)
-            {
-                _cached = _source;
-            }
-
-            if (_clone != null)
-            {
-                ClearClone();
-
-                MakeClone();
-            }
-        }
-#endif
 
         private static Material CreateClone(Material source)
         {

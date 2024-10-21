@@ -2,17 +2,22 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" +nameof(Materials) + "/" + nameof(MaterialSwitcherApplier))]
-    public class MaterialSwitcherApplier : MonoBehaviour
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Instance Switcher")]
+    public class MaterialInstanceSwitcher : MonoBehaviour
     {
-        [SerializeField] private MaterialApplier _original;
-        [SerializeField] private MaterialApplier _switched;
+        [SerializeField] private MaterialInstance _original;
+        [SerializeField] private MaterialInstance _switched;
         [Space]
         [SerializeField] private bool _isSwitched;
 
-        public MaterialApplier Current
+        public MaterialInstance Current
         {
             get => _isSwitched ? _switched : _original;
+        }
+
+        public MaterialInstance Other
+        {
+            get => _isSwitched ? _original : _switched;
         }
 
         public bool IsSwitched
@@ -55,13 +60,17 @@ namespace Common.Materials
 
         private void ApplyCurrentInstance()
         {
-            Current?.ApplyCurrent();
+            Other?.ClearClone();
+
+            Current?.MakeClone();
         }
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            ApplyCurrentInstance();
+            Current?.ClearClone();
+
+            Current?.MakeClone();
         }
 #endif
     }

@@ -4,13 +4,13 @@ using UnityEngine.UI;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialApplierForGraphic))]
-    public class MaterialApplierForGraphic : MaterialApplier
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Applier To Target Graphics")]
+    public class MaterialApplierToTargetGraphics : MaterialApplierToTarget
     {
         private List<Graphic> _graphics;
         private List<Material> _originals;
 
-        public MaterialApplierForGraphic()
+        public MaterialApplierToTargetGraphics()
         {
             _graphics = new List<Graphic>();
             _originals = new List<Material>();

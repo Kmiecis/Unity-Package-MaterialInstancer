@@ -3,17 +3,10 @@ using UnityEngine;
 
 namespace Common.Materials
 {
+    [ExecuteAlways]
     public abstract class MaterialApplier : MonoBehaviour
     {
         [SerializeField] private MaterialInstance[] _instances;
-        [SerializeField] private Transform _target;
-        [SerializeField] private int _depth;
-
-        public Transform Target
-        {
-            get => _target ?? transform;
-            set => SetTarget(value);
-        }
 
         public bool HasClone()
         {
@@ -33,7 +26,7 @@ namespace Common.Materials
             {
                 if (instance.GetClone(out var material))
                 {
-                    ApplyMaterial(Target, material, _depth);
+                    ApplyMaterial(material);
                 }
             }
         }
@@ -44,7 +37,7 @@ namespace Common.Materials
             {
                 if (instance.TryGetClone(out var material))
                 {
-                    ApplyMaterial(Target, material, _depth);
+                    ApplyMaterial(material);
                 }
             }
         }
@@ -55,7 +48,7 @@ namespace Common.Materials
             {
                 var material = instance.Current;
 
-                ApplyMaterial(Target, material, _depth);
+                ApplyMaterial(material);
             }
         }
 
@@ -65,7 +58,7 @@ namespace Common.Materials
             {
                 if (instance.TryGetClone(out var material))
                 {
-                    RemoveMaterial(Target, material, _depth);
+                    RemoveMaterial(material);
                 }
             }
         }
@@ -76,7 +69,7 @@ namespace Common.Materials
             {
                 if (instance.TryGetClone(out var material))
                 {
-                    RemoveMaterial(Target, material, _depth);
+                    RemoveMaterial(material);
                     
                     instance.ClearClone();
                 }
@@ -94,20 +87,18 @@ namespace Common.Materials
             }
         }
 
-        protected abstract void ApplyMaterial(Transform target, Material material, int depth);
+        protected abstract void ApplyMaterial(Material material);
 
-        protected abstract void RemoveMaterial(Transform target, Material material, int depth);
-        
-        private void SetTarget(Transform target)
+        protected abstract void RemoveMaterial(Material material);
+
+        private void OnEnable()
         {
-            if (HasClone())
-            {
-                ClearClone();
+            ApplyClone();
+        }
 
-                _target = target;
-
-                ApplyClone();
-            }
+        private void OnDisable()
+        {
+            ClearClone();
         }
 
         private void OnDestroy()
@@ -116,18 +107,14 @@ namespace Common.Materials
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
-        {
-            ClearClone();
-        }
-
-        private void Reset()
+        protected virtual void Reset()
         {
             _instances = GetComponentsInChildren<MaterialInstance>();
-            _target = transform;
-            _depth = transform.GetDepth();
 
-            ReapplyClone();
+            if (enabled)
+            {
+                ApplyClone();
+            }
         }
 #endif
     }

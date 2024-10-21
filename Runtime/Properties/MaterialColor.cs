@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialColor))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Color")]
     public class MaterialColor : MaterialPropertyNamed<Color>
     {
         public float Alpha

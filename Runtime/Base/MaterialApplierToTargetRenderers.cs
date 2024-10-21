@@ -3,15 +3,21 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialApplierForRenderer))]
-    public class MaterialApplierForRenderer : MaterialApplier
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Applier To Target Renderers")]
+    public class MaterialApplierToTargetRenderers : MaterialApplierToTarget
     {
         [SerializeField] private int _index;
 
         private List<Renderer> _renderers;
         private List<Material> _originals;
 
-        public MaterialApplierForRenderer()
+        public int Index
+        {
+            get => _index;
+            set => SetIndex(value);
+        }
+
+        public MaterialApplierToTargetRenderers()
         {
             _renderers = new List<Renderer>();
             _originals = new List<Material>();
@@ -82,6 +88,18 @@ namespace Common.Materials
                         RemoveMaterial(child, material, depth - 1);
                     }
                 }
+            }
+        }
+
+        private void SetIndex(int index)
+        {
+            if (HasClone())
+            {
+                ClearClone();
+
+                _index = index;
+
+                ApplyClone();
             }
         }
     }

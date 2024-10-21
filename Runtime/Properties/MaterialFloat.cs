@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialFloat))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Float")]
     public class MaterialFloat : MaterialPropertyNamed<float>
     {
         public override bool CanHandleProperty(Material material, string name)

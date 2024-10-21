@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInteger))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Integer")]
     public class MaterialInteger : MaterialPropertyNamed<int>
     {
         public override bool CanHandleProperty(Material material, string name)
