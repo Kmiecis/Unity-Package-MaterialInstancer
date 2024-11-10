@@ -46,7 +46,7 @@ namespace Common.Materials
         {
             if (_clone == null && _source != null)
             {
-                _clone = CreateClone(_source);
+                _clone = UMaterial.Create(_source);
 
                 return true;
             }
@@ -68,14 +68,6 @@ namespace Common.Materials
         private void OnDestroy()
         {
             ClearClone();
-        }
-
-        private static Material CreateClone(Material source)
-        {
-            var result = new Material(source);
-            result.name += " (Clone)";
-            result.hideFlags = HideFlags.DontSave;
-            return result;
         }
     }
 }

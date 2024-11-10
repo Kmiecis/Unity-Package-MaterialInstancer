@@ -5,7 +5,15 @@ namespace Common.Materials
 {
     public static class UMaterial
     {
-        public static Material FindMaterial(Transform target, int depth = -1)
+        public static Material Create(Material source)
+        {
+            var result = new Material(source);
+            result.name += " (Clone)";
+            result.hideFlags = HideFlags.DontSave;
+            return result;
+        }
+
+        public static Material Find(Transform target, int depth = -1)
         {
             if (target.TryGetComponent<Graphic>(out var graphic))
             {
@@ -23,7 +31,7 @@ namespace Common.Materials
                 {
                     if (!child.TryGetComponent<MaterialBlocker>(out _))
                     {
-                        var result = FindMaterial(child, depth - 1);
+                        var result = Find(child, depth - 1);
                         if (result != null)
                         {
                             return result;
