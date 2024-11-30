@@ -51,6 +51,7 @@ namespace Common.Materials
             {
                 if (instance.TryGetClone(out var material))
                 {
+                    RemoveMaterial(material);
                     ApplyMaterial(material);
                 }
             }
@@ -163,7 +164,7 @@ namespace Common.Materials
 
         private void OnSelection(bool selected)
         {
-            if (enabled)
+            if (this && enabled)
             {
                 if (selected)
                 {
