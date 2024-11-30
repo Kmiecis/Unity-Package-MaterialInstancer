@@ -43,6 +43,9 @@ namespace Common.Materials
                 }
 
                 renderer.SetSharedMaterials(materials);
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(renderer);
+#endif
             }
         }
 
@@ -68,6 +71,9 @@ namespace Common.Materials
                 }
 
                 renderer.SetSharedMaterials(materials);
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(renderer);
+#endif
             }
         }
 
@@ -80,6 +86,10 @@ namespace Common.Materials
                 _index = index;
 
                 ApplyClone();
+            }
+            else
+            {
+                _index = index;
             }
         }
     }

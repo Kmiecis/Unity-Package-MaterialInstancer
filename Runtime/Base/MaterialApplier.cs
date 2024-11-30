@@ -1,8 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace Common.Materials
 {
@@ -140,13 +137,13 @@ namespace Common.Materials
 
         private void OnSelected()
         {
-            var selection = Selection.objects;
+            var selection = UnityEditor.Selection.objects;
             var selected = IsSelected(selection);
             OnSelection(selected);
 
             if (!selected)
             {
-                EditorApplication.update -= OnSelected;
+                UnityEditor.EditorApplication.update -= OnSelected;
             }
         }
 
@@ -183,8 +180,8 @@ namespace Common.Materials
 
         private void OnDrawGizmosSelected()
         {
-            EditorApplication.update -= OnSelected;
-            EditorApplication.update += OnSelected;
+            UnityEditor.EditorApplication.update -= OnSelected;
+            UnityEditor.EditorApplication.update += OnSelected;
         }
 #endif
     }

@@ -75,6 +75,10 @@ namespace Common.Materials
 
                 ApplyClone();
             }
+            else
+            {
+                _target = target;
+            }
         }
 
         private void SetDepth(int depth)
@@ -86,6 +90,10 @@ namespace Common.Materials
                 _depth = depth;
 
                 ApplyClone();
+            }
+            else
+            {
+                _depth = depth;
             }
         }
 
