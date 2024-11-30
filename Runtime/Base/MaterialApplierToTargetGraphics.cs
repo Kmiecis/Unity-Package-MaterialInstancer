@@ -16,7 +16,7 @@ namespace Common.Materials
             _originals = new List<Material>();
         }
 
-        protected override void ApplyMaterial(Transform target, Material material, int depth)
+        protected override void ApplyMaterial(Transform target, Material material)
         {
             if (target.TryGetComponent<Graphic>(out var graphic))
             {
@@ -25,20 +25,9 @@ namespace Common.Materials
 
                 graphic.material = material;
             }
-
-            if (depth != 0)
-            {
-                foreach (Transform child in target)
-                {
-                    if (!child.TryGetComponent<MaterialBlocker>(out _))
-                    {
-                        ApplyMaterial(child, material, depth - 1);
-                    }
-                }
-            }
         }
 
-        protected override void RemoveMaterial(Transform target, Material material, int depth)
+        protected override void RemoveMaterial(Transform target, Material material)
         {
             if (target.TryGetComponent<Graphic>(out var graphic))
             {
@@ -48,17 +37,6 @@ namespace Common.Materials
                     var original = _originals.RevokeAt(index);
 
                     graphic.material = original;
-                }
-            }
-
-            if (depth != 0)
-            {
-                foreach (Transform child in target)
-                {
-                    if (!child.TryGetComponent<MaterialBlocker>(out _))
-                    {
-                        RemoveMaterial(child, material, depth - 1);
-                    }
                 }
             }
         }

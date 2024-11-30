@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Common.Materials
 {
@@ -18,6 +21,17 @@ namespace Common.Materials
                 }
             }
             return false;
+        }
+
+        public void CreateClone()
+        {
+            foreach (var instance in GetInstances())
+            {
+                if (instance.CreateClone(out var material))
+                {
+                    ApplyMaterial(material);
+                }
+            }
         }
 
         public void ApplyClone()
@@ -93,12 +107,18 @@ namespace Common.Materials
 
         private void OnEnable()
         {
-            ApplyClone();
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+#endif
+                CreateClone();
         }
 
         private void OnDisable()
         {
-            ClearClone();
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+#endif
+                ClearClone();
         }
 
         private void OnDestroy()
@@ -113,8 +133,57 @@ namespace Common.Materials
 
             if (enabled)
             {
-                ApplyClone();
+                CreateClone();
             }
+        }
+
+        private void OnSelected()
+        {
+            var selection = Selection.objects;
+            var selected = IsSelected(selection);
+            OnSelection(selected);
+
+            if (!selected)
+            {
+                EditorApplication.update -= OnSelected;
+            }
+        }
+
+        private bool IsSelected(Object[] objects)
+        {
+            foreach (var item in objects)
+            {
+                if (item == gameObject)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void OnSelection(bool selected)
+        {
+            if (enabled)
+            {
+                if (selected)
+                {
+                    CreateClone();
+                }
+                else
+                {
+                    ClearClone();
+                }
+            }
+            else
+            {
+                ClearClone();
+            }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            EditorApplication.update -= OnSelected;
+            EditorApplication.update += OnSelected;
         }
 #endif
     }

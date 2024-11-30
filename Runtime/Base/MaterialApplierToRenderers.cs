@@ -59,7 +59,9 @@ namespace Common.Materials
                 }
                 else
                 {
-                    materials.Remove(material);
+                    while (materials.Remove(material))
+                    {
+                    }
                 }
 
                 renderer.SetSharedMaterials(materials);

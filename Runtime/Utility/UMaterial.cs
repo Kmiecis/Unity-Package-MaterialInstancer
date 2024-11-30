@@ -8,7 +8,7 @@ namespace Common.Materials
         public static Material Create(Material source)
         {
             var result = new Material(source);
-            result.name += " (Clone)";
+            result.name += " (Instance)";
             result.hideFlags = HideFlags.DontSave;
             return result;
         }

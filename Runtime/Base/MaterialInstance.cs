@@ -25,6 +25,12 @@ namespace Common.Materials
             return _clone != null;
         }
 
+        public bool CreateClone(out Material clone)
+        {
+            clone = default;
+            return MakeClone() && TryGetClone(out clone);
+        }
+
         public Material GetClone()
         {
             MakeClone();

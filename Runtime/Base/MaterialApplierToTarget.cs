@@ -29,9 +29,41 @@ namespace Common.Materials
             RemoveMaterial(_target, material, _depth);
         }
 
-        protected abstract void ApplyMaterial(Transform target, Material material, int depth);
+        protected abstract void ApplyMaterial(Transform target, Material material);
 
-        protected abstract void RemoveMaterial(Transform target, Material material, int depth);
+        protected abstract void RemoveMaterial(Transform target, Material material);
+
+        private void ApplyMaterial(Transform target, Material material, int depth)
+        {
+            ApplyMaterial(target, material);
+
+            if (depth != 0)
+            {
+                foreach (Transform child in target)
+                {
+                    if (!child.TryGetComponent<MaterialBlocker>(out _))
+                    {
+                        ApplyMaterial(child, material, depth - 1);
+                    }
+                }
+            }
+        }
+
+        private void RemoveMaterial(Transform target, Material material, int depth)
+        {
+            RemoveMaterial(target, material);
+
+            if (depth != 0)
+            {
+                foreach (Transform child in target)
+                {
+                    if (!child.TryGetComponent<MaterialBlocker>(out _))
+                    {
+                        RemoveMaterial(child, material, depth - 1);
+                    }
+                }
+            }
+        }
 
         private void SetTarget(Transform target)
         {
