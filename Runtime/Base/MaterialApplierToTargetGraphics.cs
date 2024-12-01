@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Applier To Target Graphics")]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialApplierToTargetGraphics))]
     public class MaterialApplierToTargetGraphics : MaterialApplierToTarget
     {
         private List<Graphic> _graphics;
@@ -24,6 +24,9 @@ namespace Common.Materials
                 _originals.Add(graphic.material);
 
                 graphic.material = material;
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(graphic);
+#endif
             }
         }
 
@@ -37,6 +40,9 @@ namespace Common.Materials
                     var original = _originals.RevokeAt(index);
 
                     graphic.material = original;
+#if UNITY_EDITOR
+                    UnityEditor.EditorUtility.SetDirty(graphic);
+#endif
                 }
             }
         }

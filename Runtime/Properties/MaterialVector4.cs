@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Vector4")]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialVector4))]
     public class MaterialVector4 : MaterialPropertyNamed<Vector4>
     {
         public override bool CanHandleProperty(Material material, string name)

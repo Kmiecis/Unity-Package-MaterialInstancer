@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Applier To Target Renderers")]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialApplierToTargetRenderers))]
     public class MaterialApplierToTargetRenderers : MaterialApplierToTarget
     {
         [SerializeField] private int _index;

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Instance Switcher")]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInstanceSwitcher))]
     public class MaterialInstanceSwitcher : MonoBehaviour
     {
         [SerializeField] private MaterialInstance _original;

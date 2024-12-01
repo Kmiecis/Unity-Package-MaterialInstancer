@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Applier To Graphics")]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialApplierToGraphics))]
     public class MaterialApplierToGraphics : MaterialApplier
     {
         [SerializeField] private Graphic[] _graphics;
@@ -25,6 +25,9 @@ namespace Common.Materials
                 _originals.Add(graphic.material);
 
                 graphic.material = material;
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(graphic);
+#endif
             }
         }
 
@@ -37,6 +40,9 @@ namespace Common.Materials
                 var original = _originals.RevokeAt(i);
 
                 graphic.material = original;
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(graphic);
+#endif
             }
         }
 

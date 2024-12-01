@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Texture Offset")]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialTextureOffset))]
     public class MaterialTextureOffset : MaterialPropertyNamed<Vector2>
     {
         public override bool CanHandleProperty(Material material, string name)

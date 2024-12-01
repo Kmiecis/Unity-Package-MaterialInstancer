@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + "Material Render Queue")]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialRenderQueue))]
     public class MaterialRenderQueue : MaterialProperty<int>
     {
         protected override void ApplyPropertyValue(Material material, int value)
