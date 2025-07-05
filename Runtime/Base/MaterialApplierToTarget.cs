@@ -9,7 +9,7 @@ namespace Common.Materials
 
         public Transform Target
         {
-            get => _target ?? transform;
+            get => _target != null ? _target : transform;
             set => SetTarget(value);
         }
 
@@ -21,12 +21,12 @@ namespace Common.Materials
 
         protected override void ApplyMaterial(Material material)
         {
-            ApplyMaterial(_target, material, _depth);
+            ApplyMaterial(Target, material, _depth);
         }
 
         protected override void RemoveMaterial(Material material)
         {
-            RemoveMaterial(_target, material, _depth);
+            RemoveMaterial(Target, material, _depth);
         }
 
         protected abstract void ApplyMaterial(Transform target, Material material);
