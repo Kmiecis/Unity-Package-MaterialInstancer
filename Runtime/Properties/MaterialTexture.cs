@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialTexture))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Texture")]
     public class MaterialTexture : MaterialPropertyNamed<Texture>
     {
         public override bool CanHandleProperty(Material material, string name)

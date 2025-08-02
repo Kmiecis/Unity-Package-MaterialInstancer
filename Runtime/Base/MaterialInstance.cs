@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Common.Materials
 {
     [ExecuteAlways]
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialInstance))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Instance")]
     public class MaterialInstance : MonoBehaviour
     {
         [SerializeField] private Material _source = null;

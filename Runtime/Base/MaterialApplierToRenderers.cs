@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialApplierToRenderers))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Applier To Renderers")]
     public class MaterialApplierToRenderers : MaterialApplier
     {
         [SerializeField] private Renderer[] _renderers;

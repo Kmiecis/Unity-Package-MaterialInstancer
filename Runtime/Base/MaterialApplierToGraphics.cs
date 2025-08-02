@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/" + nameof(MaterialApplierToGraphics))]
+    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Applier To Graphics")]
     public class MaterialApplierToGraphics : MaterialApplier
     {
         [SerializeField] private Graphic[] _graphics;
