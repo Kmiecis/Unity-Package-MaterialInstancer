@@ -23,6 +23,22 @@ namespace Common.Materials
             _originals = new List<Material>();
         }
 
+        public void SetIndex(int index)
+        {
+            if (HasClone())
+            {
+                RemoveClone();
+
+                _index = index;
+
+                ApplyClone();
+            }
+            else
+            {
+                _index = index;
+            }
+        }
+
         protected override void ApplyMaterial(Transform target, Material material)
         {
             if (target.TryGetComponent<Renderer>(out var renderer))
@@ -74,22 +90,6 @@ namespace Common.Materials
 #if UNITY_EDITOR
                 UnityEditor.EditorUtility.SetDirty(renderer);
 #endif
-            }
-        }
-
-        private void SetIndex(int index)
-        {
-            if (HasClone())
-            {
-                ClearClone();
-
-                _index = index;
-
-                ApplyClone();
-            }
-            else
-            {
-                _index = index;
             }
         }
     }

@@ -19,6 +19,38 @@ namespace Common.Materials
             set => SetDepth(value);
         }
 
+        public void SetTarget(Transform target)
+        {
+            if (HasClone())
+            {
+                RemoveClone();
+
+                _target = target;
+
+                ApplyClone();
+            }
+            else
+            {
+                _target = target;
+            }
+        }
+
+        public void SetDepth(int depth)
+        {
+            if (HasClone())
+            {
+                RemoveClone();
+
+                _depth = depth;
+
+                ApplyClone();
+            }
+            else
+            {
+                _depth = depth;
+            }
+        }
+
         protected override void ApplyMaterial(Material material)
         {
             ApplyMaterial(Target, material, _depth);
@@ -64,46 +96,5 @@ namespace Common.Materials
                 }
             }
         }
-
-        private void SetTarget(Transform target)
-        {
-            if (HasClone())
-            {
-                ClearClone();
-
-                _target = target;
-
-                ApplyClone();
-            }
-            else
-            {
-                _target = target;
-            }
-        }
-
-        private void SetDepth(int depth)
-        {
-            if (HasClone())
-            {
-                ClearClone();
-
-                _depth = depth;
-
-                ApplyClone();
-            }
-            else
-            {
-                _depth = depth;
-            }
-        }
-
-#if UNITY_EDITOR
-        protected override void Reset()
-        {
-            _target = transform;
-
-            base.Reset();
-        }
-#endif
     }
 }

@@ -11,9 +11,47 @@ namespace Common.Materials
 
         private readonly List<Material> _originals;
 
+        public Renderer[] Renderers
+        {
+            get => _renderers;
+            set => SetRenderers(value);
+        }
+
         public MaterialApplierToRenderers()
         {
             _originals = new List<Material>();
+        }
+
+        public void SetRenderers(params Renderer[] renderers)
+        {
+            if (HasClone())
+            {
+                RemoveClone();
+
+                _renderers = renderers;
+
+                ApplyClone();
+            }
+            else
+            {
+                _renderers = renderers;
+            }
+        }
+
+        public void SetIndex(int index)
+        {
+            if (HasClone())
+            {
+                RemoveClone();
+
+                _index = index;
+
+                ApplyClone();
+            }
+            else
+            {
+                _index = index;
+            }
         }
 
         protected override void ApplyMaterial(Material material)

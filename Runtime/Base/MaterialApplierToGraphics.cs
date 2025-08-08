@@ -11,9 +11,31 @@ namespace Common.Materials
 
         private List<Material> _originals;
 
+        public Graphic[] Graphics
+        {
+            get => _graphics;
+            set => SetGraphics(value);
+        }
+
         public MaterialApplierToGraphics()
         {
             _originals = new List<Material>();
+        }
+
+        public void SetGraphics(params Graphic[] graphics)
+        {
+            if (HasClone())
+            {
+                RemoveClone();
+
+                _graphics = graphics;
+
+                ApplyClone();
+            }
+            else
+            {
+                _graphics = graphics;
+            }
         }
 
         protected override void ApplyMaterial(Material material)
