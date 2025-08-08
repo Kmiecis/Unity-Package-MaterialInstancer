@@ -6,7 +6,7 @@ namespace Common.Materials
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Applier To Target Renderers")]
     public class MaterialApplierToTargetRenderers : MaterialApplierToTarget
     {
-        [SerializeField] private int _index;
+        [SerializeField] private int _index = -1;
 
         private List<Renderer> _renderers;
         private List<Material> _originals;

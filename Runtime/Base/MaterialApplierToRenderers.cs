@@ -7,7 +7,7 @@ namespace Common.Materials
     public class MaterialApplierToRenderers : MaterialApplier
     {
         [SerializeField] private Renderer[] _renderers;
-        [SerializeField] private int _index;
+        [SerializeField] private int _index = -1;
 
         private readonly List<Material> _originals;
 
@@ -75,11 +75,12 @@ namespace Common.Materials
         }
 
 #if UNITY_EDITOR
-        protected override void Reset()
+        [ContextMenu("Search Renderers")]
+        private void SearchInstances()
         {
             _renderers = GetComponentsInChildren<Renderer>();
 
-            base.Reset();
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif
     }

@@ -127,12 +127,7 @@ namespace Common.Materials
 #if UNITY_EDITOR
         protected virtual void Reset()
         {
-            _instances = GetComponentsInChildren<MaterialInstance>();
-
-            if (enabled)
-            {
-                CreateClone();
-            }
+            enabled = false;
         }
 
         private void OnSelected()
@@ -182,6 +177,14 @@ namespace Common.Materials
         {
             UnityEditor.EditorApplication.update -= OnSelected;
             UnityEditor.EditorApplication.update += OnSelected;
+        }
+
+        [ContextMenu("Search Instances")]
+        private void SearchInstances()
+        {
+            _instances = GetComponentsInChildren<MaterialInstance>();
+
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif
     }

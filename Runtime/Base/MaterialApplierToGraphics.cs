@@ -47,11 +47,12 @@ namespace Common.Materials
         }
 
 #if UNITY_EDITOR
-        protected override void Reset()
+        [ContextMenu("Search Graphics")]
+        private void SearchInstances()
         {
             _graphics = GetComponentsInChildren<Graphic>();
 
-            base.Reset();
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif
     }
