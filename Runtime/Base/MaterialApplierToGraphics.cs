@@ -7,40 +7,70 @@ namespace Common.Materials
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Applier To Graphics")]
     public class MaterialApplierToGraphics : MaterialApplier
     {
-        [SerializeField] private Graphic[] _graphics;
+        [SerializeField] private List<Graphic> _graphics;
 
         private List<Material> _originals;
 
-        public Graphic[] Graphics
-        {
-            get => _graphics;
-            set => SetGraphics(value);
-        }
-
         public MaterialApplierToGraphics()
         {
+            _graphics = new List<Graphic>();
+
             _originals = new List<Material>();
         }
 
-        public void SetGraphics(params Graphic[] graphics)
+        public void AddGraphic(Graphic graphic)
         {
-            if (HasClone())
+            void Applier()
             {
-                RemoveClone();
-
-                _graphics = graphics;
-
-                ApplyClone();
+                _graphics.Add(graphic);
             }
-            else
+
+            ChangeSafely(Applier);
+        }
+
+        public void AddGraphics(IEnumerable<Graphic> graphics)
+        {
+            void Applier()
             {
-                _graphics = graphics;
+                _graphics.AddRange(graphics);
             }
+
+            ChangeSafely(Applier);
+        }
+
+        public void RemoveGraphic(Graphic graphic)
+        {
+            void Applier()
+            {
+                _graphics.Remove(graphic);
+            }
+
+            ChangeSafely(Applier);
+        }
+
+        public void RemoveGraphics(IEnumerable<Graphic> graphics)
+        {
+            void Applier()
+            {
+                _graphics.RemoveRange(graphics);
+            }
+
+            ChangeSafely(Applier);
+        }
+
+        public void ClearGraphics()
+        {
+            void Applier()
+            {
+                _graphics.Clear();
+            }
+
+            ChangeSafely(Applier);
         }
 
         protected override void ApplyMaterial(Material material)
         {
-            for (int i = 0; i < _graphics.Length; ++i)
+            for (int i = 0; i < _graphics.Count; ++i)
             {
                 var graphic = _graphics[i];
 
@@ -55,7 +85,7 @@ namespace Common.Materials
 
         protected override void RemoveMaterial(Material material)
         {
-            for (int i = _graphics.Length - 1; i > -1; --i)
+            for (int i = _graphics.Count - 1; i > -1; --i)
             {
                 var graphic = _graphics[i];
 
@@ -72,7 +102,8 @@ namespace Common.Materials
         [ContextMenu("Search Graphics")]
         private void SearchInstances()
         {
-            _graphics = GetComponentsInChildren<Graphic>();
+            var graphics = GetComponentsInChildren<Graphic>();
+            _graphics = new List<Graphic>(graphics);
 
             UnityEditor.EditorUtility.SetDirty(this);
         }

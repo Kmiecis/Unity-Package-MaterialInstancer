@@ -6,57 +6,81 @@ namespace Common.Materials
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Applier To Renderers")]
     public class MaterialApplierToRenderers : MaterialApplier
     {
-        [SerializeField] private Renderer[] _renderers;
+        [SerializeField] private List<Renderer> _renderers;
         [SerializeField] private int _index = -1;
 
         private readonly List<Material> _originals;
 
-        public Renderer[] Renderers
-        {
-            get => _renderers;
-            set => SetRenderers(value);
-        }
-
         public MaterialApplierToRenderers()
         {
+            _renderers = new List<Renderer>();
+
             _originals = new List<Material>();
         }
 
-        public void SetRenderers(params Renderer[] renderers)
+        public void AddRenderer(Renderer renderer)
         {
-            if (HasClone())
+            void Applier()
             {
-                RemoveClone();
-
-                _renderers = renderers;
-
-                ApplyClone();
+                _renderers.Add(renderer);
             }
-            else
+
+            ChangeSafely(Applier);
+        }
+
+        public void AddRenderers(IEnumerable<Renderer> renderers)
+        {
+            void Applier()
             {
-                _renderers = renderers;
+                _renderers.AddRange(renderers);
             }
+
+            ChangeSafely(Applier);
+        }
+
+        public void RemoveRenderer(Renderer renderer)
+        {
+            void Applier()
+            {
+                _renderers.Remove(renderer);
+            }
+
+            ChangeSafely(Applier);
+        }
+
+        public void RemoveRenderers(IEnumerable<Renderer> renderers)
+        {
+            void Applier()
+            {
+                _renderers.RemoveRange(renderers);
+            }
+
+            ChangeSafely(Applier);
+        }
+
+        public void ClearRenderers()
+        {
+            void Applier()
+            {
+                _renderers.Clear();
+            }
+
+            ChangeSafely(Applier);
         }
 
         public void SetIndex(int index)
         {
-            if (HasClone())
-            {
-                RemoveClone();
-
-                _index = index;
-
-                ApplyClone();
-            }
-            else
+            void Applier()
             {
                 _index = index;
             }
+
+            ChangeSafely(Applier);
         }
 
         protected override void ApplyMaterial(Material material)
         {
-            for (int i = 0; i < _renderers.Length; ++i)
+            for (int i = 0; i < _renderers.Count; ++i)
             {
                 var renderer = _renderers[i];
 
@@ -85,7 +109,7 @@ namespace Common.Materials
 
         protected override void RemoveMaterial(Material material)
         {
-            var length = Mathf.Min(_renderers.Length, _originals.Count);
+            var length = Mathf.Min(_renderers.Count, _originals.Count);
             for (int i = length - 1; i > -1; --i)
             {
                 var renderer = _renderers[i];
@@ -116,7 +140,8 @@ namespace Common.Materials
         [ContextMenu("Search Renderers")]
         private void SearchInstances()
         {
-            _renderers = GetComponentsInChildren<Renderer>();
+            var renderers = GetComponentsInChildren<Renderer>();
+            _renderers = new List<Renderer>(renderers);
 
             UnityEditor.EditorUtility.SetDirty(this);
         }

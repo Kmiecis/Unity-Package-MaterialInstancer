@@ -21,34 +21,22 @@ namespace Common.Materials
 
         public void SetTarget(Transform target)
         {
-            if (HasClone())
-            {
-                RemoveClone();
-
-                _target = target;
-
-                ApplyClone();
-            }
-            else
+            void Applier()
             {
                 _target = target;
             }
+
+            ChangeSafely(Applier);
         }
 
         public void SetDepth(int depth)
         {
-            if (HasClone())
-            {
-                RemoveClone();
-
-                _depth = depth;
-
-                ApplyClone();
-            }
-            else
+            void Applier()
             {
                 _depth = depth;
             }
+
+            ChangeSafely(Applier);
         }
 
         protected override void ApplyMaterial(Material material)

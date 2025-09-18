@@ -1,12 +1,64 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Common.Materials
 {
     [ExecuteAlways]
     public abstract class MaterialApplier : MonoBehaviour
     {
-        [SerializeField] private MaterialInstance[] _instances;
+        [SerializeField] private List<MaterialInstance> _instances;
+
+        public void AddInstance(MaterialInstance instance)
+        {
+            void Change()
+            {
+                _instances.Add(instance);
+            }
+
+            ChangeSafely(Change);
+        }
+
+        public void AddInstances(IEnumerable<MaterialInstance> instances)
+        {
+            void Change()
+            {
+                _instances.AddRange(instances);
+            }
+
+            ChangeSafely(Change);
+        }
+
+        public void RemoveInstance(MaterialInstance instance)
+        {
+            void Change()
+            {
+                _instances.Remove(instance);
+            }
+
+            ChangeSafely(Change);
+        }
+
+        public void RemoveInstances(IEnumerable<MaterialInstance> instances)
+        {
+            void Change()
+            {
+                _instances.RemoveRange(instances);
+            }
+
+            ChangeSafely(Change);
+        }
+
+        public void ApplyCurrent()
+        {
+            foreach (var instance in GetInstances())
+            {
+                var material = instance.Current;
+
+                ApplyMaterial(material);
+            }
+        }
 
         public bool HasClone()
         {
@@ -54,16 +106,6 @@ namespace Common.Materials
             }
         }
 
-        public void ApplyCurrent()
-        {
-            foreach (var instance in GetInstances())
-            {
-                var material = instance.Current;
-
-                ApplyMaterial(material);
-            }
-        }
-
         public void RemoveClone()
         {
             foreach (var instance in GetInstances())
@@ -92,10 +134,26 @@ namespace Common.Materials
         {
             if (_instances != null)
             {
-                for (int i = 0; i < _instances.Length; ++i)
+                for (int i = 0; i < _instances.Count; ++i)
                 {
                     yield return _instances[i];
                 }
+            }
+        }
+
+        protected void ChangeSafely(Action applier)
+        {
+            if (HasClone())
+            {
+                RemoveClone();
+
+                applier();
+
+                ApplyClone();
+            }
+            else
+            {
+                applier();
             }
         }
 
@@ -182,7 +240,8 @@ namespace Common.Materials
         [ContextMenu("Search Instances")]
         private void SearchInstances()
         {
-            _instances = GetComponentsInChildren<MaterialInstance>();
+            var instances = GetComponentsInChildren<MaterialInstance>();
+            _instances = new List<MaterialInstance>(instances);
 
             UnityEditor.EditorUtility.SetDirty(this);
         }

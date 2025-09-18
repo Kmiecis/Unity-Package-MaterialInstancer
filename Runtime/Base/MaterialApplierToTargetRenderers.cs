@@ -25,18 +25,12 @@ namespace Common.Materials
 
         public void SetIndex(int index)
         {
-            if (HasClone())
-            {
-                RemoveClone();
-
-                _index = index;
-
-                ApplyClone();
-            }
-            else
+            void Applier()
             {
                 _index = index;
             }
+
+            ChangeSafely(Applier);
         }
 
         protected override void ApplyMaterial(Transform target, Material material)

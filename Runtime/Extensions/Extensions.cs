@@ -5,7 +5,7 @@ namespace Common.Materials
 {
     internal static class Extensions
     {
-        #region Array
+        #region List
         public static T RevokeAt<T>(this IList<T> self, int index)
         {
             var result = self[index];
@@ -17,6 +17,14 @@ namespace Common.Materials
         {
             index = self.IndexOf(item);
             return index != -1;
+        }
+
+        public static void RemoveRange<T>(this IList<T> self, IEnumerable<T> items)
+        {
+            foreach (var item in items)
+            {
+                self.Remove(item);
+            }
         }
         #endregion
 
