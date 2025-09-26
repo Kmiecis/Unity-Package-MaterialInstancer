@@ -65,8 +65,8 @@ namespace CommonEditor.Materials
         {
             HashSet<string> result = null;
 
-            var instances = (MaterialInstance[])_instancesProperty.GetValue();
-            if (instances != null && instances.Length > 0)
+            var instances = (List<MaterialInstance>)_instancesProperty.GetValue();
+            if (instances != null && instances.Count > 0)
             {
                 foreach (var instance in instances)
                 {
