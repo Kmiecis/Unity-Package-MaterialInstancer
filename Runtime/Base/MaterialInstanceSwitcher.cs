@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace Common.Materials
 {
-    [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Instance Switcher")]
+    [Obsolete("Replace with " + nameof(MaterialReferenceSwitcher))]
     public class MaterialInstanceSwitcher : MonoBehaviour
     {
         [SerializeField] private MaterialInstance _original;
@@ -47,31 +48,11 @@ namespace Common.Materials
         public void SetSwitched()
         {
             _isSwitched = true;
-
-            ApplyCurrentInstance();
         }
 
         public void SetOriginal()
         {
             _isSwitched = false;
-
-            ApplyCurrentInstance();
         }
-
-        private void ApplyCurrentInstance()
-        {
-            Other?.ClearClone();
-
-            Current?.MakeClone();
-        }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            Current?.ClearClone();
-
-            Current?.MakeClone();
-        }
-#endif
     }
 }

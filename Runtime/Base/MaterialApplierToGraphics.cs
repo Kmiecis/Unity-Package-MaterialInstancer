@@ -20,52 +20,47 @@ namespace Common.Materials
 
         public void AddGraphic(Graphic graphic)
         {
-            void Applier()
-            {
-                _graphics.Add(graphic);
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _graphics.Add(graphic);
+
+            Apply();
         }
 
         public void AddGraphics(IEnumerable<Graphic> graphics)
         {
-            void Applier()
-            {
-                _graphics.AddRange(graphics);
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _graphics.AddRange(graphics);
+
+            Apply();
         }
 
         public void RemoveGraphic(Graphic graphic)
         {
-            void Applier()
-            {
-                _graphics.Remove(graphic);
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _graphics.Remove(graphic);
+
+            Apply();
         }
 
         public void RemoveGraphics(IEnumerable<Graphic> graphics)
         {
-            void Applier()
-            {
-                _graphics.RemoveRange(graphics);
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _graphics.RemoveRange(graphics);
+
+            Apply();
         }
 
         public void ClearGraphics()
         {
-            void Applier()
-            {
-                _graphics.Clear();
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _graphics.Clear();
+
+            Apply();
         }
 
         protected override void ApplyMaterial(Material material)
@@ -100,7 +95,7 @@ namespace Common.Materials
 
 #if UNITY_EDITOR
         [ContextMenu("Search Graphics")]
-        private void SearchInstances()
+        private void SearchGraphics()
         {
             var graphics = GetComponentsInChildren<Graphic>();
             _graphics = new List<Graphic>(graphics);

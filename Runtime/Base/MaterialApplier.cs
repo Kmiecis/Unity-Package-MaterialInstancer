@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -8,152 +7,72 @@ namespace Common.Materials
     [ExecuteAlways]
     public abstract class MaterialApplier : MonoBehaviour
     {
-        [SerializeField] private List<MaterialInstance> _instances;
+        [SerializeField] private List<MaterialReference> _references;
 
-        public void AddInstance(MaterialInstance instance)
+        public void AddReference(MaterialReference reference)
         {
-            void Change()
-            {
-                _instances.Add(instance);
-            }
+            Clear();
 
-            ChangeSafely(Change);
+            _references.Add(reference);
+
+            Apply();
         }
 
-        public void AddInstances(IEnumerable<MaterialInstance> instances)
+        public void AddReferences(IEnumerable<MaterialReference> references)
         {
-            void Change()
-            {
-                _instances.AddRange(instances);
-            }
+            Clear();
 
-            ChangeSafely(Change);
+            _references.AddRange(references);
+
+            Apply();
         }
 
-        public void RemoveInstance(MaterialInstance instance)
+        public void RemoveReference(MaterialReference reference)
         {
-            void Change()
-            {
-                _instances.Remove(instance);
-            }
+            Clear();
 
-            ChangeSafely(Change);
+            _references.Remove(reference);
+
+            Apply();
         }
 
-        public void RemoveInstances(IEnumerable<MaterialInstance> instances)
+        public void RemoveReferences(IEnumerable<MaterialReference> references)
         {
-            void Change()
-            {
-                _instances.RemoveRange(instances);
-            }
+            Clear();
 
-            ChangeSafely(Change);
+            _references.RemoveRange(references);
+
+            Apply();
         }
 
-        public void ApplyCurrent()
+        public void Apply()
         {
-            foreach (var instance in GetInstances())
+            foreach (var reference in GetReferences())
             {
-                var material = instance.Current;
+                var material = reference.Material;
 
                 ApplyMaterial(material);
             }
         }
 
-        public bool HasClone()
+        public void Clear()
         {
-            foreach (var instance in GetInstances())
+            foreach (var reference in GetReferences())
             {
-                if (instance.TryGetClone(out _))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+                var material = reference.Material;
 
-        public void CreateClone()
-        {
-            foreach (var instance in GetInstances())
-            {
-                if (instance.CreateClone(out var material))
-                {
-                    ApplyMaterial(material);
-                }
+                RemoveMaterial(material);
             }
         }
 
-        public void ApplyClone()
+        public IEnumerable<MaterialReference> GetReferences()
         {
-            foreach (var instance in GetInstances())
+            if (_references != null)
             {
-                if (instance.GetClone(out var material))
+                for (int i = 0; i < _references.Count; ++i)
                 {
-                    ApplyMaterial(material);
+                    yield return _references[i];
                 }
-            }
-        }
-
-        public void ReapplyClone()
-        {
-            foreach (var instance in GetInstances())
-            {
-                if (instance.TryGetClone(out var material))
-                {
-                    RemoveMaterial(material);
-                    ApplyMaterial(material);
-                }
-            }
-        }
-
-        public void RemoveClone()
-        {
-            foreach (var instance in GetInstances())
-            {
-                if (instance.TryGetClone(out var material))
-                {
-                    RemoveMaterial(material);
-                }
-            }
-        }
-
-        public void ClearClone()
-        {
-            foreach (var instance in GetInstances())
-            {
-                if (instance.TryGetClone(out var material))
-                {
-                    RemoveMaterial(material);
-                    
-                    instance.ClearClone();
-                }
-            }
-        }
-
-        public IEnumerable<MaterialInstance> GetInstances()
-        {
-            if (_instances != null)
-            {
-                for (int i = 0; i < _instances.Count; ++i)
-                {
-                    yield return _instances[i];
-                }
-            }
-        }
-
-        protected void ChangeSafely(Action applier)
-        {
-            if (HasClone())
-            {
-                RemoveClone();
-
-                applier();
-
-                ApplyClone();
-            }
-            else
-            {
-                applier();
             }
         }
 
@@ -166,7 +85,7 @@ namespace Common.Materials
 #if UNITY_EDITOR
             if (Application.isPlaying)
 #endif
-                CreateClone();
+                Apply();
         }
 
         private void OnDisable()
@@ -174,18 +93,22 @@ namespace Common.Materials
 #if UNITY_EDITOR
             if (Application.isPlaying)
 #endif
-                ClearClone();
+                Clear();
         }
 
         private void OnDestroy()
         {
-            ClearClone();
+            Clear();
         }
 
 #if UNITY_EDITOR
-        protected virtual void Reset()
+        [ContextMenu("Search References")]
+        private void SearchReferences()
         {
-            enabled = false;
+            var references = GetComponentsInChildren<MaterialReference>();
+            _references = new List<MaterialReference>(references);
+
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 
         private void OnSelected()
@@ -202,32 +125,46 @@ namespace Common.Materials
 
         private bool IsSelected(Object[] objects)
         {
-            foreach (var item in objects)
+            try
             {
-                if (item == gameObject)
+                foreach (var item in objects)
                 {
-                    return true;
+                    if (item == gameObject)
+                    {
+                        return true;
+                    }
                 }
+            }
+            catch
+            {
             }
             return false;
         }
+
+        private bool _selected;
 
         private void OnSelection(bool selected)
         {
             if (this && enabled)
             {
-                if (selected)
+                if (selected && !_selected)
                 {
-                    CreateClone();
+                    Apply();
+
+                    _selected = true;
                 }
-                else
+                else if (!selected && _selected)
                 {
-                    ClearClone();
+                    Clear();
+
+                    _selected = false;
                 }
             }
-            else
+            else if (_selected)
             {
-                ClearClone();
+                Clear();
+
+                _selected = false;
             }
         }
 
@@ -237,13 +174,25 @@ namespace Common.Materials
             UnityEditor.EditorApplication.update += OnSelected;
         }
 
-        [ContextMenu("Search Instances")]
-        private void SearchInstances()
+        protected virtual void Reset()
         {
-            var instances = GetComponentsInChildren<MaterialInstance>();
-            _instances = new List<MaterialInstance>(instances);
+            enabled = false;
 
-            UnityEditor.EditorUtility.SetDirty(this);
+            SearchReferences();
+        }
+
+        private void OnValidate()
+        {
+            if (_references == null || _references.Count == 0)
+            {
+                var references = GetComponentsInChildren<MaterialReference>();
+                if (references.Length > 0)
+                {
+                    _references = new List<MaterialReference>(references);
+
+                    UnityEditor.EditorUtility.SetDirty(this);
+                }
+            }
         }
 #endif
     }

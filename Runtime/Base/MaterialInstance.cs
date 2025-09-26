@@ -2,73 +2,32 @@ using UnityEngine;
 
 namespace Common.Materials
 {
-    [ExecuteAlways]
     [AddComponentMenu(nameof(Common) + "/" + nameof(Materials) + "/Material Instance")]
-    public class MaterialInstance : MonoBehaviour
+    public class MaterialInstance : MaterialReference
     {
-        [SerializeField] private Material _source = null;
-
         private Material _clone;
 
-        public Material Source
+        public override Material Material
         {
-            get => _source;
+            get => GetClone();
         }
 
-        public Material Current
-        {
-            get => _clone != null ? _clone : _source;
-        }
-
-        public bool HasClone()
-        {
-            return _clone != null;
-        }
-
-        public bool CreateClone(out Material clone)
-        {
-            clone = default;
-            return MakeClone() && TryGetClone(out clone);
-        }
-
-        public Material GetClone()
-        {
-            MakeClone();
-            return _clone;
-        }
-
-        public bool GetClone(out Material clone)
-        {
-            MakeClone();
-            return TryGetClone(out clone);
-        }
-
-        public bool TryGetClone(out Material clone)
-        {
-            return (clone = _clone) != null;
-        }
-
-        public bool MakeClone()
+        private Material GetClone()
         {
             if (_clone == null && _source != null)
             {
                 _clone = UMaterial.Create(_source);
-
-                return true;
             }
-            return false;
+            return _clone;
         }
 
-        public bool ClearClone()
+        private void ClearClone()
         {
             if (_clone != null)
             {
                 _clone.Destroy();
                 _clone = null;
-
-                return true;
             }
-            return false;
         }
 
         private void OnDestroy()

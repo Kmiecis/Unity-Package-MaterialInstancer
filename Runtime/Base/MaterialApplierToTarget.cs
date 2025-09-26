@@ -21,22 +21,20 @@ namespace Common.Materials
 
         public void SetTarget(Transform target)
         {
-            void Applier()
-            {
-                _target = target;
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _target = target;
+
+            Apply();
         }
 
         public void SetDepth(int depth)
         {
-            void Applier()
-            {
-                _depth = depth;
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _depth = depth;
+
+            Apply();
         }
 
         protected override void ApplyMaterial(Material material)
@@ -84,5 +82,14 @@ namespace Common.Materials
                 }
             }
         }
+
+#if UNITY_EDITOR
+        protected override void Reset()
+        {
+            base.Reset();
+
+            _target = transform;
+        }
+#endif
     }
 }

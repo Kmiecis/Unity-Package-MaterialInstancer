@@ -25,12 +25,11 @@ namespace Common.Materials
 
         public void SetIndex(int index)
         {
-            void Applier()
-            {
-                _index = index;
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _index = index;
+
+            Apply();
         }
 
         protected override void ApplyMaterial(Transform target, Material material)

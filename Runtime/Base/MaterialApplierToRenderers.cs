@@ -20,62 +20,56 @@ namespace Common.Materials
 
         public void AddRenderer(Renderer renderer)
         {
-            void Applier()
-            {
-                _renderers.Add(renderer);
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _renderers.Add(renderer);
+
+            Apply();
         }
 
         public void AddRenderers(IEnumerable<Renderer> renderers)
         {
-            void Applier()
-            {
-                _renderers.AddRange(renderers);
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _renderers.AddRange(renderers);
+
+            Apply();
         }
 
         public void RemoveRenderer(Renderer renderer)
         {
-            void Applier()
-            {
-                _renderers.Remove(renderer);
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _renderers.Remove(renderer);
+
+            Apply();
         }
 
         public void RemoveRenderers(IEnumerable<Renderer> renderers)
         {
-            void Applier()
-            {
-                _renderers.RemoveRange(renderers);
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _renderers.RemoveRange(renderers);
+
+            Apply();
         }
 
         public void ClearRenderers()
         {
-            void Applier()
-            {
-                _renderers.Clear();
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _renderers.Clear();
+
+            Apply();
         }
 
         public void SetIndex(int index)
         {
-            void Applier()
-            {
-                _index = index;
-            }
+            Clear();
 
-            ChangeSafely(Applier);
+            _index = index;
+
+            Apply();
         }
 
         protected override void ApplyMaterial(Material material)
@@ -138,7 +132,7 @@ namespace Common.Materials
 
 #if UNITY_EDITOR
         [ContextMenu("Search Renderers")]
-        private void SearchInstances()
+        private void SearchRenderers()
         {
             var renderers = GetComponentsInChildren<Renderer>();
             _renderers = new List<Renderer>(renderers);
