@@ -65,6 +65,12 @@ namespace Common.Materials
             }
         }
 
+        public void Reapply()
+        {
+            Clear();
+            Apply();
+        }
+
         public IEnumerable<MaterialReference> GetReferences()
         {
             if (_references != null)
