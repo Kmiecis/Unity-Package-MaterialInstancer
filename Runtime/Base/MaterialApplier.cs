@@ -119,11 +119,13 @@ namespace Common.Materials
 
         private void OnSelected()
         {
-            var selection = UnityEditor.Selection.objects;
-            var selected = IsSelected(selection);
-            OnSelection(selected);
-
-            if (!selected)
+            try
+            {
+                var selection = UnityEditor.Selection.objects;
+                var selected = IsSelected(selection);
+                OnSelection(selected);
+            }
+            catch
             {
                 UnityEditor.EditorApplication.update -= OnSelected;
             }
@@ -131,20 +133,14 @@ namespace Common.Materials
 
         private bool IsSelected(Object[] objects)
         {
-            try
+            foreach (var item in objects)
             {
-                foreach (var item in objects)
+                if (item == gameObject)
                 {
-                    if (item == gameObject)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
-            catch
-            {
-            }
-            return false;
+            throw new System.Exception();
         }
 
         private bool _selected;
