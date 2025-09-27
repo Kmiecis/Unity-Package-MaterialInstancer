@@ -186,20 +186,6 @@ namespace Common.Materials
 
             SearchReferences();
         }
-
-        private void OnValidate()
-        {
-            if (_references == null || _references.Count == 0)
-            {
-                var references = GetComponentsInChildren<MaterialReference>();
-                if (references.Length > 0)
-                {
-                    _references = new List<MaterialReference>(references);
-
-                    UnityEditor.EditorUtility.SetDirty(this);
-                }
-            }
-        }
 #endif
     }
 }
