@@ -102,11 +102,6 @@ namespace Common.Materials
                 Clear();
         }
 
-        private void OnDestroy()
-        {
-            Clear();
-        }
-
 #if UNITY_EDITOR
         protected virtual void SearchContext()
         {
