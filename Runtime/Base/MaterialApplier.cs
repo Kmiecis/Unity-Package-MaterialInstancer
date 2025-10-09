@@ -108,11 +108,16 @@ namespace Common.Materials
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("Search References")]
-        private void SearchReferences()
+        protected virtual void SearchContext()
         {
             var references = GetComponentsInChildren<MaterialReference>();
             _references = new List<MaterialReference>(references);
+        }
+
+        [ContextMenu("Search Parameters")]
+        private void SearchParameters()
+        {
+            SearchContext();
 
             UnityEditor.EditorUtility.SetDirty(this);
         }
@@ -180,7 +185,7 @@ namespace Common.Materials
         {
             enabled = false;
 
-            SearchReferences();
+            SearchParameters();
         }
 #endif
     }

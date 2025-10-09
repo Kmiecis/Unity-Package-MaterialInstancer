@@ -161,11 +161,16 @@ namespace Common.Materials
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("Search Instances")]
-        private void SearchInstances()
+        protected virtual void SearchContext()
         {
             var instances = transform.GetComponentsInChildren<MaterialInstance>();
             _instances = new List<MaterialInstance>(instances);
+        }
+
+        [ContextMenu("Search Parameters")]
+        private void SearchParameters()
+        {
+            SearchContext();
 
             UnityEditor.EditorUtility.SetDirty(this);
         }
@@ -177,10 +182,11 @@ namespace Common.Materials
 
         private void Reset()
         {
-            SearchInstances();
+            enabled = false;
 
-            var value = GetDefaultValue();
-            SetPropertyValue(value);
+            SearchParameters();
+
+            _value = GetDefaultValue();
         }
 #endif
     }

@@ -94,13 +94,12 @@ namespace Common.Materials
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("Search Graphics")]
-        private void SearchGraphics()
+        protected override void SearchContext()
         {
+            base.SearchContext();
+
             var graphics = GetComponentsInChildren<Graphic>();
             _graphics = new List<Graphic>(graphics);
-
-            UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif
     }

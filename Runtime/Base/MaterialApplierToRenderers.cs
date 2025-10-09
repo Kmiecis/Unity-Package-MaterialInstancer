@@ -133,13 +133,12 @@ namespace Common.Materials
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("Search Renderers")]
-        private void SearchRenderers()
+        protected override void SearchContext()
         {
+            base.SearchContext();
+
             var renderers = GetComponentsInChildren<Renderer>();
             _renderers = new List<Renderer>(renderers);
-
-            UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif
     }
