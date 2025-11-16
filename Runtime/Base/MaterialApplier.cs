@@ -88,18 +88,12 @@ namespace Common.Materials
 
         private void OnEnable()
         {
-#if UNITY_EDITOR
-            if (Application.isPlaying)
-#endif
-                Apply();
+            Apply();
         }
 
         private void OnDisable()
         {
-#if UNITY_EDITOR
-            if (Application.isPlaying)
-#endif
-                Clear();
+            Clear();
         }
 
 #if UNITY_EDITOR
@@ -115,65 +109,6 @@ namespace Common.Materials
             SearchContext();
 
             UnityEditor.EditorUtility.SetDirty(this);
-        }
-
-        private void OnSelected()
-        {
-            try
-            {
-                var selection = UnityEditor.Selection.objects;
-                var selected = IsSelected(selection);
-                OnSelection(selected);
-            }
-            catch
-            {
-                UnityEditor.EditorApplication.update -= OnSelected;
-            }
-        }
-
-        private bool IsSelected(Object[] objects)
-        {
-            foreach (var item in objects)
-            {
-                if (item == gameObject)
-                {
-                    return true;
-                }
-            }
-            throw new System.Exception();
-        }
-
-        private bool _selected;
-
-        private void OnSelection(bool selected)
-        {
-            if (this && enabled)
-            {
-                if (selected && !_selected)
-                {
-                    Apply();
-
-                    _selected = true;
-                }
-                else if (!selected && _selected)
-                {
-                    Clear();
-
-                    _selected = false;
-                }
-            }
-            else if (_selected)
-            {
-                Clear();
-
-                _selected = false;
-            }
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            UnityEditor.EditorApplication.update -= OnSelected;
-            UnityEditor.EditorApplication.update += OnSelected;
         }
 
         protected virtual void Reset()
