@@ -32,18 +32,17 @@ namespace Common.Materials
 
         protected override void RemoveMaterial(Transform target, Material material)
         {
-            if (target.TryGetComponent<Graphic>(out var graphic))
+            if (target.TryGetComponent<Graphic>(out var graphic) &&
+                _graphics.TryIndexOf(graphic, out var index))
             {
-                if (_graphics.TryIndexOf(graphic, out var index))
-                {
-                    _graphics.RemoveAt(index);
-                    var original = _originals.RevokeAt(index);
+                _graphics.RemoveAt(index);
 
-                    graphic.material = original;
+                var original = _originals.RevokeAt(index);
+
+                graphic.material = original;
 #if UNITY_EDITOR
-                    UnityEditor.EditorUtility.SetDirty(graphic);
+                UnityEditor.EditorUtility.SetDirty(graphic);
 #endif
-                }
             }
         }
     }

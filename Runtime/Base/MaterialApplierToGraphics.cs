@@ -80,11 +80,11 @@ namespace Common.Materials
 
         protected override void RemoveMaterial(Material material)
         {
-            for (int i = _graphics.Count - 1; i > -1; --i)
+            for (int i = _originals.Count - 1; i > -1; --i)
             {
-                var graphic = _graphics[i];
-
                 var original = _originals.RevokeAt(i);
+
+                var graphic = _graphics[i];
 
                 graphic.material = original;
 #if UNITY_EDITOR
