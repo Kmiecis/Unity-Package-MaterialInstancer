@@ -9,7 +9,7 @@ namespace Common.Materials
         [SerializeField] private int _index = -1;
 
         private List<Renderer> _renderers;
-        private List<Material> _cache;
+        private List<Material> _temp;
         private List<Material> _originals;
 
         public int Index
@@ -21,7 +21,7 @@ namespace Common.Materials
         public MaterialApplierToTargetRenderers()
         {
             _renderers = new List<Renderer>();
-            _cache = new List<Material>();
+            _temp = new List<Material>();
             _originals = new List<Material>();
         }
 
@@ -38,25 +38,25 @@ namespace Common.Materials
         {
             if (target.TryGetComponent<Renderer>(out var renderer))
             {
-                renderer.GetSharedMaterials(_cache);
+                renderer.GetSharedMaterials(_temp);
 
-                if (-1 < _index && _index < _cache.Count)
+                if (-1 < _index && _index < _temp.Count)
                 {
                     _renderers.Add(renderer);
-                    _originals.Add(_cache[_index]);
+                    _originals.Add(_temp[_index]);
 
-                    _cache[_index] = material;
+                    _temp[_index] = material;
                 }
                 else
                 {
-                    _cache.Add(material);
+                    _temp.Add(material);
                 }
 
-                renderer.SetSharedMaterials(_cache);
+                renderer.SetSharedMaterials(_temp);
 #if UNITY_EDITOR
                 UnityEditor.EditorUtility.SetDirty(renderer);
 #endif
-                _cache.Clear();
+                _temp.Clear();
             }
         }
 
@@ -64,27 +64,27 @@ namespace Common.Materials
         {
             if (target.TryGetComponent<Renderer>(out var renderer))
             {
-                renderer.GetSharedMaterials(_cache);
+                renderer.GetSharedMaterials(_temp);
 
                 if (_renderers.TryIndexOf(renderer, out var index))
                 {
                     _renderers.RemoveAt(index);
                     var original = _originals.RevokeAt(index);
 
-                    _cache[_index] = original;
+                    _temp[_index] = original;
                 }
                 else
                 {
-                    while (_cache.Remove(material))
+                    while (_temp.Remove(material))
                     {
                     }
                 }
 
-                renderer.SetSharedMaterials(_cache);
+                renderer.SetSharedMaterials(_temp);
 #if UNITY_EDITOR
                 UnityEditor.EditorUtility.SetDirty(renderer);
 #endif
-                _cache.Clear();
+                _temp.Clear();
             }
         }
     }

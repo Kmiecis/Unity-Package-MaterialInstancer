@@ -18,7 +18,8 @@ namespace Common.Materials
 
         protected override void ApplyMaterial(Transform target, Material material)
         {
-            if (target.TryGetComponent<Graphic>(out var graphic))
+            if (target.TryGetComponent<Graphic>(out var graphic) &&
+                !_graphics.Contains(graphic))
             {
                 _graphics.Add(graphic);
                 _originals.Add(graphic.material);

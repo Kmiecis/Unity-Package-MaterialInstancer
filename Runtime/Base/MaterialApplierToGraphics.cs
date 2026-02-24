@@ -65,9 +65,9 @@ namespace Common.Materials
 
         protected override void ApplyMaterial(Material material)
         {
-            for (int i = 0; i < _graphics.Count; ++i)
+            while (_originals.Count < _graphics.Count)
             {
-                var graphic = _graphics[i];
+                var graphic = _graphics[_originals.Count];
 
                 _originals.Add(graphic.material);
 
