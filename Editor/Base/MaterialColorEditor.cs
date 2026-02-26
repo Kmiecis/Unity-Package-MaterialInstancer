@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace CommonEditor.Materials
 {
-    [CanEditMultipleObjects]
     [CustomEditor(typeof(MaterialColor))]
     public class MaterialColorEditor : MaterialPropertyNamedEditor
     {

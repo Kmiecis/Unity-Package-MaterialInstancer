@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace CommonEditor.Materials
 {
-    [CanEditMultipleObjects]
     [CustomEditor(typeof(MaterialAlpha))]
     public class MaterialAlphaEditor : MaterialPropertyNamedEditor
     {
