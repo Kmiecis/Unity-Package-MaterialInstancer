@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace CommonEditor.Materials
 {
-    [CanEditMultipleObjects]
     [CustomEditor(typeof(MaterialPropertyNamed<>), true)]
     public class MaterialPropertyNamedEditor : Editor
     {
@@ -15,11 +14,18 @@ namespace CommonEditor.Materials
         private static float LabelWidth => EditorGUIUtility.labelWidth;
         private static float FieldOffset => LabelWidth + UEditorGUIUtility.SpaceWidth;
 
+        private static HashSet<string> _NamesCache;
+
         private SerializedProperty _instancesProperty;
         private SerializedProperty _nameProperty;
         private SerializedProperty _valueProperty;
 
         private IMaterialPropertyNamedVerifier Script => (IMaterialPropertyNamedVerifier)target;
+
+        static MaterialPropertyNamedEditor()
+        {
+            _NamesCache = new HashSet<string>();
+        }
 
         public override void OnInspectorGUI()
         {
@@ -63,43 +69,43 @@ namespace CommonEditor.Materials
 
         private string[] FindPropertyNames()
         {
-            HashSet<string> result = null;
+            _NamesCache.Clear();
 
+            foreach (var material in GetMaterials())
+            {
+                var properties = MaterialEditor.GetMaterialProperties(new Material[] { material });
+                foreach (var property in properties)
+                {
+                    if (Script.CanHandleProperty(material, property.name))
+                    {
+                        _NamesCache.Add(property.name);
+                    }
+                }
+            }
+
+            if (_NamesCache.Count == 0)
+                return null;
+
+            return _NamesCache.ToArray();
+        }
+
+        private IEnumerable<Material> GetMaterials()
+        {
             var instances = (List<MaterialInstance>)_instancesProperty.GetValue();
             if (instances != null && instances.Count > 0)
             {
                 foreach (var instance in instances)
                 {
-                    var material = instance.Source;
-                    if (material != null)
+                    if (instance != null)
                     {
-                        var names = new HashSet<string>();
-
-                        var properties = MaterialEditor.GetMaterialProperties(new Material[] { material });
-                        foreach (var property in properties)
+                        var material = instance.Source;
+                        if (material != null)
                         {
-                            if (Script.CanHandleProperty(material, property.name))
-                            {
-                                names.Add(property.name);
-                            }
-                        }
-
-                        if (result == null)
-                        {
-                            result = names;
-                        }
-                        else
-                        {
-                            result.IntersectWith(names);
+                            yield return material;
                         }
                     }
                 }
             }
-
-            if (result == null || result.Count == 0)
-                return null;
-
-            return result.ToArray();
         }
 
         private void OnEnable()
